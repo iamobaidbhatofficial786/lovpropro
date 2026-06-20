@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Shield } from 'lucide-react';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -27,7 +26,7 @@ export default function LoginPage() {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ password }),
       });
 
       const data = await response.json();
@@ -64,21 +63,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">
-              Admin Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@powerkits.net"
-              required
-              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">
-              Password
+              Enter Administrator Password
             </label>
             <input
               type="password"

@@ -5,29 +5,30 @@ import jwt from 'jsonwebtoken';
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json();
+    const { password } = await request.json();
 
-    if (!email || !password) {
-      return NextResponse.json({ success: false, error: 'Email and password are required' }, { status: 400 });
+    if (!password) {
+      return NextResponse.json({ success: false, error: 'Password is required' }, { status: 400 });
     }
 
     const supabase = getSupabaseAdmin();
 
-    // Query admin user from DB
-    const { data: user, error } = await supabase
+    // Query the first admin user from DB
+    const { data: users, error } = await supabase
       .from('admin_users')
       .select('*')
-      .eq('email', email)
-      .single();
+      .limit(1);
 
-    if (error || !user) {
-      return NextResponse.json({ success: false, error: 'Invalid email or password.' }, { status: 401 });
+    if (error || !users || users.length === 0) {
+      return NextResponse.json({ success: false, error: 'Authentication failed. Database connection error or no admin user found.' }, { status: 401 });
     }
+
+    const user = users[0];
 
     // Verify bcrypt password hash
     const passwordIsValid = bcrypt.compareSync(password, user.password_hash);
     if (!passwordIsValid) {
-      return NextResponse.json({ success: false, error: 'Invalid email or password.' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Invalid password.' }, { status: 401 });
     }
 
     const adminSecret = process.env.ADMIN_SECRET || 'fallback_secret';
