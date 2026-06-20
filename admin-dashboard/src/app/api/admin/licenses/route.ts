@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
-import { generateLicenseKey, sha256 } from '@/../../vercel-api/api/utils/crypto';
+import { generateLicenseKey, sha256 } from '@/lib/crypto';
 import jwt from 'jsonwebtoken';
 
 function verifyAuth(request: Request) {
