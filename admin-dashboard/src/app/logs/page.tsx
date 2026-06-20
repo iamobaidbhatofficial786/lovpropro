@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import AdminGuard from '@/components/AdminGuard';
+import AdminGuard from '../../components/AdminGuard';
 import { ShieldAlert, RefreshCw, Key, Laptop, Globe, Info } from 'lucide-react';
 
 interface LogItem {

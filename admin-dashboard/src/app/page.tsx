@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import AdminGuard from '@/components/AdminGuard';
+import AdminGuard from '../components/AdminGuard';
 import { Key, Laptop, ShieldAlert, CheckCircle, XCircle, AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Stats {

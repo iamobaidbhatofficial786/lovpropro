@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import AdminGuard from '@/components/AdminGuard';
+import AdminGuard from '../../components/AdminGuard';
 import { Plus, Trash2, ShieldAlert, CheckCircle, Search, Edit2, Ban, ShieldCheck, X } from 'lucide-react';
 
 interface License {

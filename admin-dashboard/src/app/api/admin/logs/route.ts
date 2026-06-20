@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '../../../../lib/supabase';
 import jwt from 'jsonwebtoken';
 
 function verifyAuth(request: Request) {

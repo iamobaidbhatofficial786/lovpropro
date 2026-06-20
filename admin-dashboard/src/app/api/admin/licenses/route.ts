@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '@/lib/supabase';
-import { generateLicenseKey, sha256 } from '@/lib/crypto';
+import { getSupabaseAdmin } from '../../../../lib/supabase';
+import { generateLicenseKey, sha256 } from '../../../../lib/crypto';
 import jwt from 'jsonwebtoken';
 
 function verifyAuth(request: Request) {
