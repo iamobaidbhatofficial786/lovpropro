@@ -15,7 +15,7 @@ function extensionFooterBadge() {
   return name + " • v" + extensionVersionShort();
 }
 
-var POWERKITS_API_BASE = "https://your-vercel-deployment.vercel.app";
+var POWERKITS_API_BASE = "https://vercel-api-ten-phi.vercel.app";
 var POWERKITS_API_KEY = "pk_lov_ext_a8f3c21e9d4b7f0e6a2c5d8b1e4f7a0c";
 
 /** @deprecated Use POWERKITS_* — kept for older script references */
