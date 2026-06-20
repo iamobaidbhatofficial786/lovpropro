@@ -52,7 +52,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         'Authorization': `Bearer ${masterApiKey}`,
         'x-upsert': 'true',
       },
-      body: rawBody,
+      body: rawBody as any,
     });
 
     const status = upstreamResponse.status;
