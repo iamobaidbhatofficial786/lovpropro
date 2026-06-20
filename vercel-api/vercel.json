@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/functions/v1/validate-license", "destination": "/api/license/activate" },
+    { "source": "/functions/v1/assert-session", "destination": "/api/license/verify" },
+    { "source": "/functions/v1/proxy-command", "destination": "/api/premium/proxy-command" },
+    { "source": "/functions/v1/optimize-prompt", "destination": "/api/premium/optimize-prompt" },
+    { "source": "/functions/v1/create-lovable-project", "destination": "/api/premium/create-lovable-project" },
+    { "source": "/functions/v1/remove-watermark", "destination": "/api/premium/remove-watermark" },
+    { "source": "/functions/v1/publish-project", "destination": "/api/premium/publish-project" },
+    { "source": "/functions/v1/enable-cloud", "destination": "/api/premium/enable-cloud" },
+    { "source": "/storage/v1/object/prompt-images/:path*", "destination": "/api/storage/upload?path=:path*" },
+    { "source": "/storage/v1/object/public/prompt-images/:path*", "destination": "/api/storage/public?path=:path*" },
+    { "source": "/rest/v1/notifications", "destination": "/api/rest/notifications" },
+    { "source": "/rest/v1/packages", "destination": "/api/rest/packages" },
+    { "source": "/rest/v1/extension_versions", "destination": "/api/rest/versions" },
+    { "source": "/rest/v1/user_roles", "destination": "/api/rest/user_roles" },
+    { "source": "/rest/v1/licenses", "destination": "/api/rest/licenses" }
+  ]
+}

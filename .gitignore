@@ -1,0 +1,35 @@
+# Next.js build output
+.next/
+out/
+
+# Vercel
+.vercel/
+
+# Obfuscated extension output
+dist/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# IDE files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Private env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.private.pem
+*.private

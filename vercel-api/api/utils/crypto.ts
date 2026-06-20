@@ -1,0 +1,54 @@
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+
+// SHA-256 helper
+export function sha256(text: string): string {
+  return crypto.createHash('sha256').update(text).digest('hex');
+}
+
+// Generate license key in XXXX-XXXX-XXXX-XXXX-XXXX format
+export function generateLicenseKey(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const groups: string[] = [];
+  
+  for (let i = 0; i < 5; i++) {
+    let group = '';
+    const bytes = crypto.randomBytes(4);
+    for (let j = 0; j < 4; j++) {
+      group += chars[bytes[j] % chars.length];
+    }
+    groups.push(group);
+  }
+  
+  return groups.join('-');
+}
+
+// JWT Sign (RS256)
+export function signJwt(payload: object): string {
+  const privateKey = process.env.JWT_PRIVATE_KEY;
+  if (!privateKey) {
+    throw new Error('JWT_PRIVATE_KEY environment variable is not defined.');
+  }
+  
+  // Format private key correctly if it has escaped newlines
+  const formattedKey = privateKey.replace(/\\n/g, '\n');
+  
+  return jwt.sign(payload, formattedKey, {
+    algorithm: 'RS256',
+    expiresIn: '24h',
+  });
+}
+
+// JWT Verify (RS256)
+export function verifyJwt(token: string): any {
+  const publicKey = process.env.JWT_PUBLIC_KEY;
+  if (!publicKey) {
+    throw new Error('JWT_PUBLIC_KEY environment variable is not defined.');
+  }
+  
+  const formattedKey = publicKey.replace(/\\n/g, '\n');
+  
+  return jwt.verify(token, formattedKey, {
+    algorithms: ['RS256'],
+  });
+}

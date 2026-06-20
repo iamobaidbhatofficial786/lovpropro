@@ -1,0 +1,13 @@
+{
+  "name": "extension-obfuscator",
+  "version": "1.0.0",
+  "description": "Chrome Extension JavaScript Obfuscation Pipeline",
+  "main": "build-extension.js",
+  "scripts": {
+    "build": "node build-extension.js"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "javascript-obfuscator": "^4.1.0"
+  }
+}
