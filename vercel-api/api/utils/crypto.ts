@@ -1,17 +1,16 @@
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 
-// SHA-256 helper
 export function sha256(text: string): string {
   return crypto.createHash('sha256').update(text).digest('hex');
 }
 
-// Generate license key in XXXX-XXXX-XXXX-XXXX-XXXX format
+/** Generate license key: LPK-XXXX-XXXX-XXXX-XXXX */
 export function generateLicenseKey(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const groups: string[] = [];
-  
-  for (let i = 0; i < 5; i++) {
+
+  for (let i = 0; i < 4; i++) {
     let group = '';
     const bytes = crypto.randomBytes(4);
     for (let j = 0; j < 4; j++) {
@@ -19,36 +18,50 @@ export function generateLicenseKey(): string {
     }
     groups.push(group);
   }
-  
-  return groups.join('-');
+
+  return 'LPK-' + groups.join('-');
 }
 
-// JWT Sign (RS256)
+function getJwtSecret(): string | null {
+  return process.env.JWT_SECRET || null;
+}
+
+function getPrivateKey(): string | null {
+  const key = process.env.JWT_PRIVATE_KEY;
+  if (!key) return null;
+  return key.replace(/\\n/g, '\n');
+}
+
+function getPublicKey(): string | null {
+  const key = process.env.JWT_PUBLIC_KEY;
+  if (!key) return null;
+  return key.replace(/\\n/g, '\n');
+}
+
 export function signJwt(payload: object): string {
-  const privateKey = process.env.JWT_PRIVATE_KEY;
-  if (!privateKey) {
-    throw new Error('JWT_PRIVATE_KEY environment variable is not defined.');
+  const secret = getJwtSecret();
+  if (secret) {
+    return jwt.sign(payload, secret, { algorithm: 'HS256', expiresIn: '24h' });
   }
-  
-  // Format private key correctly if it has escaped newlines
-  const formattedKey = privateKey.replace(/\\n/g, '\n');
-  
-  return jwt.sign(payload, formattedKey, {
-    algorithm: 'RS256',
-    expiresIn: '24h',
-  });
+
+  const privateKey = getPrivateKey();
+  if (!privateKey) {
+    throw new Error('JWT_SECRET or JWT_PRIVATE_KEY environment variable is required.');
+  }
+
+  return jwt.sign(payload, privateKey, { algorithm: 'RS256', expiresIn: '24h' });
 }
 
-// JWT Verify (RS256)
 export function verifyJwt(token: string): any {
-  const publicKey = process.env.JWT_PUBLIC_KEY;
-  if (!publicKey) {
-    throw new Error('JWT_PUBLIC_KEY environment variable is not defined.');
+  const secret = getJwtSecret();
+  if (secret) {
+    return jwt.verify(token, secret, { algorithms: ['HS256'] });
   }
-  
-  const formattedKey = publicKey.replace(/\\n/g, '\n');
-  
-  return jwt.verify(token, formattedKey, {
-    algorithms: ['RS256'],
-  });
+
+  const publicKey = getPublicKey();
+  if (!publicKey) {
+    throw new Error('JWT_SECRET or JWT_PUBLIC_KEY environment variable is required.');
+  }
+
+  return jwt.verify(token, publicKey, { algorithms: ['RS256'] });
 }

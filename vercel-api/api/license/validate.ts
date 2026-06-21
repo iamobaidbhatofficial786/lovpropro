@@ -2,7 +2,6 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { handleCors, jsonResponse } from '../utils/cors';
 import { validateLicenseSession } from '../utils/license-service';
 
-/** assert-session compatibility — same logic as validate */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (handleCors(req, res)) return;
 
@@ -22,14 +21,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const result = await validateLicenseSession({ token: token as string, deviceId, ipAddress });
     return jsonResponse(res, result, 200);
   } catch (err: any) {
-    console.error('[API Verify] Error:', err);
+    console.error('[API Validate] Error:', err);
     return jsonResponse(res, {
-      active: false,
-      allowed: false,
       success: false,
       valid: false,
-      message: 'Network/server error.',
-      reason: 'inactive',
+      active: false,
+      allowed: false,
+      message: 'Network/server error. Please try again.',
     }, 500);
   }
 }

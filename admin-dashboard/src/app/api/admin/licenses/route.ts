@@ -22,7 +22,8 @@ export async function GET(request: Request) {
 
     if (query) {
       // If query looks like a key, search by its hash
-      if (/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i.test(query.trim())) {
+      if (/^LPK-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i.test(query.trim())
+        || /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i.test(query.trim())) {
         const hashedQuery = sha256(query.trim());
         dbQuery = dbQuery.eq('license_key_hash', hashedQuery);
       } else {

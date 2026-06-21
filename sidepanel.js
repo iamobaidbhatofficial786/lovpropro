@@ -357,6 +357,7 @@
   }
 
   function getDeviceId() {
+    if (typeof getStableDeviceId === "function") return getStableDeviceId();
     return getHardwareFingerprint();
   }
 
@@ -687,36 +688,44 @@
     const input = document.getElementById('sp-license-input');
     const log = document.getElementById('sp-license-log');
     const key = input ? input.value.trim() : '';
-    if(!key) { log.className = 'sp-log sp-log-error'; log.textContent = '⚠ Enter a key'; return; }
-    log.className = 'sp-log sp-log-info'; log.textContent = '⏳ Validating...';
+    if(!key) { log.className = 'sp-log sp-log-error'; log.textContent = '⚠ License key is required'; return; }
+    log.className = 'sp-log sp-log-info'; log.textContent = '⏳ Activating license...';
     try {
       if(!deviceId) deviceId = await getDeviceId();
-      const data = await bgFetch(VALIDATE_URL, { method: "POST", headers: apiHeaders({ "Content-Type": "application/json" }), body: JSON.stringify({ license_key: key, device_id: deviceId, max_devices: 2, device_limit: 2, allowed_devices: 2 }) });
+      const data = await bgFetch(VALIDATE_URL, { method: "POST", headers: apiHeaders({ "Content-Type": "application/json" }), body: JSON.stringify({ license_key: key, device_id: deviceId }) });
       if(data.valid) {
-        sessionId = data.session_id;
-        userName = normalizeLicenseUserName(data.user_name);
+        sessionId = data.session_id || data.token;
+        userName = normalizeLicenseUserName(data.user_name || data.plan);
         spApplyLicenseApiData(data);
         chrome.storage.local.set(Object.assign({
           ql_license_valid: true,
           ql_license_key: key,
-          ql_session_id: data.session_id,
-          ql_user_name: userName
+          ql_session_id: sessionId,
+          ql_user_name: userName,
+          ql_plan: data.plan || null
         }, typeof pkLicenseStoragePatch === "function" ? pkLicenseStoragePatch(data) : {
           ql_expires_at: data.expires_at || null,
-          ql_activated_at: data.activated_at || null,
+          ql_activated_at: data.activated_at || new Date().toISOString(),
           ql_license_status: data.status || null
         }), () => {
           if (typeof pkInvalidateAssertCache === "function") pkInvalidateAssertCache();
           syncCreditBypassOnLovableTabs(true);
-          log.className = 'sp-log sp-log-success'; log.textContent = '✓ ' + spUserText(data.message);
+          log.className = 'sp-log sp-log-success'; log.textContent = '✓ ' + spUserText(data.message || 'License activated successfully');
           setTimeout(() => { showMainUI(); startHeartbeat(key); }, 800);
         });
       } else {
-        log.className = 'sp-log sp-log-error'; log.textContent = '✗ ' + spUserText(data.message);
+        var errMsg = data.message || 'Invalid license key';
+        if (data.reason === 'expired') errMsg = 'License expired';
+        if (data.reason === 'device_conflict') errMsg = 'Activation limit exceeded';
+        if (data.reason === 'revoked') errMsg = 'License has been revoked';
+        log.className = 'sp-log sp-log-error'; log.textContent = '✗ ' + spUserText(errMsg);
       }
     } catch(err) {
       log.className = 'sp-log sp-log-error';
-      log.textContent = '✗ ' + spUserText(err.message || 'Connection error');
+      var netMsg = (err.message && /fetch|network|failed|timeout/i.test(err.message))
+        ? 'Network/server error. Please try again.'
+        : (err.message || 'Network/server error');
+      log.textContent = '✗ ' + spUserText(netMsg);
     }
   }
 

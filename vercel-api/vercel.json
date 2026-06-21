@@ -1,5 +1,18 @@
 {
   "version": 2,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "content-type, authorization, apikey, x-device-id, x-nonce, x-signature, x-timestamp, x-license-key, x-session-id, x-admin-secret"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/functions/v1/validate-license", "destination": "/api/license/activate" },
     { "source": "/functions/v1/assert-session", "destination": "/api/license/verify" },

@@ -162,6 +162,12 @@ function pkLicenseStoragePatch(data) {
   if (data.session_id) {
     patch.ql_session_id = data.session_id;
   }
+  if (data.token) {
+    patch.ql_session_id = data.token;
+  }
+  if (data.plan) {
+    patch.ql_plan = data.plan;
+  }
   if (Object.prototype.hasOwnProperty.call(data, "expires_at")) {
     patch.ql_expires_at = data.expires_at || null;
   }

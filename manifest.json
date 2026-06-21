@@ -17,7 +17,9 @@
     "https://api.lovable.dev/*",
     "https://lovable.dev/*",
     "https://lovable-api.com/*",
-    "https://lov.powerkits.net/*"
+    "https://lov.powerkits.net/*",
+    "https://lovable-powerkits-644.vercel.app/*",
+    "https://*.vercel.app/*"
   ],
   "action": {
     "default_title": "ByPass Ai",

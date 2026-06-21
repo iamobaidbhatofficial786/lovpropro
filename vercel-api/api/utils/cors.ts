@@ -15,6 +15,9 @@ export function setCorsHeaders(res: VercelResponse): void {
       'x-nonce',
       'x-signature',
       'x-timestamp',
+      'x-license-key',
+      'x-session-id',
+      'x-admin-secret',
     ].join(', '),
   );
 }

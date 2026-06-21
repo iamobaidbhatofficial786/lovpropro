@@ -2,6 +2,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { verifyJwt } from './crypto';
 import { supabase } from './supabase';
 import { logSecurityEvent, calculateAbuseScore } from './abuse-detection';
+import { setCorsHeaders } from './cors';
 import crypto from 'crypto';
 
 export interface AuthenticatedRequest extends VercelRequest {
@@ -22,6 +23,7 @@ export async function validateLicenseRequest(
   req: VercelRequest,
   res: VercelResponse
 ): Promise<AuthenticatedRequest | null> {
+  setCorsHeaders(res);
   const body = req.body || {};
   const token = body.session_id || req.headers['x-session-id'] || req.headers['authorization']?.toString().replace(/^Bearer\s+/i, '');
   const deviceHash = req.headers['x-device-id'] || body.device_id || body.device_hash;
@@ -100,7 +102,7 @@ export async function validateLicenseRequest(
 
     // Get the license key to verify signature
     // Fallback signature key is the static API key if rawLicenseKey is not supplied
-    const signatureKey = rawLicenseKey || process.env.POWERKITS_API_KEY || 'pk_lov_ext_a8f3c21e9d4b7f0e6a2c5d8b1e4f7a0c';
+    const signatureKey = rawLicenseKey || process.env.PUBLIC_API_KEY || process.env.POWERKITS_API_KEY || '';
     
     // Verify HMAC signature
     const method = req.method || "POST";
@@ -141,15 +143,28 @@ export async function validateLicenseRequest(
       return null;
     }
 
-    // 7. Verify device status is active
-    const { data: device } = await supabase
-      .from('devices')
-      .select('id, status')
+    // 7. Verify device status is active (license_devices or legacy devices)
+    let device: { id: string; status?: string } | null = null;
+    const { data: newDevice } = await supabase
+      .from('license_devices')
+      .select('id')
       .eq('license_id', license_id)
-      .eq('device_hash', tokenDeviceHash)
-      .single();
+      .eq('device_id', tokenDeviceHash)
+      .maybeSingle();
 
-    if (!device || device.status !== 'active') {
+    if (newDevice) {
+      device = { id: newDevice.id, status: 'active' };
+    } else {
+      const { data: legacyDevice } = await supabase
+        .from('devices')
+        .select('id, status')
+        .eq('license_id', license_id)
+        .eq('device_hash', tokenDeviceHash)
+        .maybeSingle();
+      device = legacyDevice;
+    }
+
+    if (!device || device.status === 'blocked') {
       await logSecurityEvent(license_id, null, 'device_mismatch', { tokenDeviceHash, ipAddress }, ipAddress, country);
       res.status(403).json({ success: false, error: 'Forbidden: Device is not authorized or blocked.' });
       return null;

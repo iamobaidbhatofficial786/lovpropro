@@ -68,6 +68,12 @@
   }
 
   function pkResolveDeviceId() {
+    if (typeof getStableDeviceId === "function") {
+      return getStableDeviceId();
+    }
+    if (typeof getDeviceId === "function") {
+      return getDeviceId();
+    }
     if (typeof getHardwareFingerprint === "function") {
       return getHardwareFingerprint();
     }

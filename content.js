@@ -525,6 +525,7 @@ const QL_HISTORY_KEY = 'ql_chat_history';
 const QL_MAX_HISTORY = 200;
 
 function getDeviceId(){
+  if (typeof getStableDeviceId === "function") return getStableDeviceId();
   return getHardwareFingerprint();
 }
 

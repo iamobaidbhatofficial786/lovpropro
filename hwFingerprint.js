@@ -145,6 +145,39 @@ async function generateHardwareFingerprint() {
 
 // Cache the fingerprint to avoid recalculation
 let _cachedFingerprint = null;
+let _cachedDeviceId = null;
+
+/**
+ * Stable device_id for license activation (crypto UUID, no personal data).
+ * Generated once and persisted in chrome.storage.local as ql_device_id.
+ */
+async function getStableDeviceId() {
+  if (_cachedDeviceId) return _cachedDeviceId;
+
+  return new Promise((resolve) => {
+    chrome.storage.local.get(["ql_device_id"], (res) => {
+      if (res.ql_device_id) {
+        _cachedDeviceId = res.ql_device_id;
+        return resolve(_cachedDeviceId);
+      }
+      var id;
+      try {
+        id = (typeof crypto !== "undefined" && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : "dev-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
+      } catch (e) {
+        id = "dev-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
+      }
+      _cachedDeviceId = id;
+      chrome.storage.local.set({ ql_device_id: id }, () => resolve(id));
+    });
+  });
+}
+
+/** Primary device identifier sent to the license API */
+async function getDeviceId() {
+  return getStableDeviceId();
+}
 
 async function getHardwareFingerprint() {
   if (_cachedFingerprint) return _cachedFingerprint;
