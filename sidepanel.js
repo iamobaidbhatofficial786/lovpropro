@@ -257,14 +257,72 @@
     });
   }
 
+  async function computeHmacSha256(secret, message) {
+    try {
+      const enc = new TextEncoder();
+      const keyData = enc.encode(secret);
+      const msgData = enc.encode(message);
+      const cryptoObj = window.crypto || crypto;
+      const key = await cryptoObj.subtle.importKey(
+        "raw",
+        keyData,
+        { name: "HMAC", hash: { name: "SHA-256" } },
+        false,
+        ["sign"]
+      );
+      const signatureBuffer = await cryptoObj.subtle.sign("HMAC", key, msgData);
+      const hashArray = Array.from(new Uint8Array(signatureBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (e) {
+      console.error("[Crypto] HMAC failed:", e);
+      return "";
+    }
+  }
+
   function bgFetch(url, opts = {}) {
     const requireSuccess = opts.requireSuccess === true;
     const vendorFeatureCompat = opts.vendorFeatureCompat === true || opts.featureUiCompat === true;
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         if (!chrome.runtime || !chrome.runtime.id) return reject(new Error("Extension context invalidated"));
         if (typeof POWERKITS_DEBUG !== "undefined" && POWERKITS_DEBUG) console.log("[SP] bgFetch ->", url);
-        chrome.runtime.sendMessage({ action: "proxyFetch", url, method: opts.method || "POST", headers: opts.headers || {}, body: opts.body || null }, (resp) => {
+
+        // Auto-attach license headers, timestamp, nonce, and signature
+        const headers = Object.assign({}, opts.headers || {});
+        try {
+          const stored = await new Promise(r => chrome.storage.local.get(["ql_license_key", "ql_session_id"], r));
+          const licenseKey = stored ? stored.ql_license_key || "" : "";
+          const sessionToken = stored ? stored.ql_session_id || "" : "";
+          
+          if (licenseKey) headers["x-license-key"] = licenseKey;
+          if (sessionToken) headers["x-session-id"] = sessionToken;
+          if (deviceId) headers["x-device-id"] = deviceId;
+
+          // Add replay attack protection (nonce & timestamp)
+          const cryptoObj = window.crypto || crypto;
+          const nonce = Array.from(cryptoObj.getRandomValues(new Uint8Array(16)))
+            .map(b => b.toString(16).padStart(2, '0')).join('');
+          const timestamp = new Date().toISOString();
+          
+          headers["x-nonce"] = nonce;
+          headers["x-timestamp"] = timestamp;
+
+          // Generate signature
+          const method = opts.method || "POST";
+          const bodyStr = opts.body ? (typeof opts.body === "string" ? opts.body : JSON.stringify(opts.body)) : "";
+          const stringToSign = [method.toUpperCase(), url, timestamp, nonce, bodyStr].join('|');
+          
+          // Use licenseKey as signature key if available, else fallback to API key
+          const signKey = licenseKey || API_KEY || "";
+          const signature = await computeHmacSha256(signKey, stringToSign);
+          if (signature) {
+            headers["x-signature"] = signature;
+          }
+        } catch (err) {
+          console.warn("[bgFetch] Failed to sign request:", err);
+        }
+
+        chrome.runtime.sendMessage({ action: "proxyFetch", url, method: opts.method || "POST", headers: headers, body: opts.body || null }, (resp) => {
           if(chrome.runtime.lastError) return reject(new Error(chrome.runtime.lastError.message));
           if(!resp) return reject(new Error("No response from background"));
           const data = resp.data;
@@ -278,6 +336,13 @@
             const errText = (data && (data.error_display || data.message || data.error))
               || (data && data.raw)
               || ("Request failed (HTTP " + resp.status + ")");
+            
+            if (resp.status === 401 || resp.status === 403) {
+              if (typeof spHandleLicenseInvalid === "function") {
+                spHandleLicenseInvalid({ reason: "revoked", message: errText });
+              }
+            }
+
             return reject(new Error(formatApiError(errText)));
           }
           if(requireSuccess && (!data || data.success !== true)) {
@@ -749,7 +814,47 @@
 
       // Sync status
       updateSync();
-      chrome.storage.onChanged.addListener((ch) => { if(ch.lovable_projectId || ch.lovable_token) updateSync(); });
+      chrome.storage.onChanged.addListener((ch) => {
+        if(ch.lovable_projectId || ch.lovable_token) updateSync();
+        if(ch.ql_license_valid) {
+          if (ch.ql_license_valid.newValue) {
+            chrome.storage.local.get([
+              "ql_user_name",
+              "ql_expires_at",
+              "ql_activated_at",
+              "ql_license_status",
+              "ql_validity_minutes",
+              "ql_session_id",
+              "ql_license_key"
+            ], (res) => {
+              userName = normalizeLicenseUserName(res.ql_user_name);
+              expiresAt = res.ql_expires_at || null;
+              spActivatedAt = res.ql_activated_at || null;
+              licenseStatus = res.ql_license_status || null;
+              validityMinutes = res.ql_validity_minutes != null ? res.ql_validity_minutes : null;
+              sessionId = res.ql_session_id || null;
+              
+              syncCreditBypassOnLovableTabs(true);
+              showMainUI();
+              if (res.ql_license_key) startHeartbeat(res.ql_license_key);
+            });
+          } else {
+            userName = "";
+            expiresAt = null;
+            spActivatedAt = null;
+            licenseStatus = null;
+            validityMinutes = null;
+            sessionId = null;
+            
+            syncCreditBypassOnLovableTabs(false);
+            if (heartbeatInterval) {
+              clearInterval(heartbeatInterval);
+              heartbeatInterval = null;
+            }
+            showLicenseGate();
+          }
+        }
+      });
 
       // Countdown
       updateCountdown();
@@ -1186,7 +1291,7 @@
     const objectKey = 'uploads/' + Date.now() + '-' + uploadFileName;
     const uploadUrl = API_BASE + '/storage/v1/object/prompt-images/' + objectKey;
     const licenseHdrs = typeof pkLicenseUploadHeaders === "function"
-      ? await pkLicenseUploadHeaders()
+      ? await pkLicenseUploadHeaders(uploadUrl, 'POST')
       : {};
 
     await new Promise(function(resolve, reject) {
@@ -1199,6 +1304,9 @@
       if (licenseHdrs['x-license-key']) xhr.setRequestHeader('x-license-key', licenseHdrs['x-license-key']);
       if (licenseHdrs['x-session-id']) xhr.setRequestHeader('x-session-id', licenseHdrs['x-session-id']);
       if (licenseHdrs['x-device-id']) xhr.setRequestHeader('x-device-id', licenseHdrs['x-device-id']);
+      if (licenseHdrs['x-signature']) xhr.setRequestHeader('x-signature', licenseHdrs['x-signature']);
+      if (licenseHdrs['x-nonce']) xhr.setRequestHeader('x-nonce', licenseHdrs['x-nonce']);
+      if (licenseHdrs['x-timestamp']) xhr.setRequestHeader('x-timestamp', licenseHdrs['x-timestamp']);
       xhr.onload = () => xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error('PUT failed: ' + xhr.status));
       xhr.onerror = () => reject(new Error('Network error'));
       xhr.send(file);

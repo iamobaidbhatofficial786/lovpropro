@@ -1,80 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=JetBrains+Mono:wght@400;700&display=swap');
+
 /**
- * Lovable Powerkits — extension theme (matches landing indigo/slate)
+ * Lovable Powerkits — extension theme (Hacking Terminal Theme)
  * Dark by default; light via body.sp-light / #ql-floating.ql-light
  */
 :root {
   color-scheme: dark;
 
-  --ql-bg: #070b14;
-  --ql-bg-elevated: #0f1524;
-  --ql-bg-surface: #131b2e;
-  --ql-bg-hover: #172038;
-  --ql-border: rgba(148, 163, 184, 0.12);
-  --ql-border-hover: rgba(129, 140, 248, 0.28);
-  --ql-text-primary: #f1f5f9;
-  --ql-text-secondary: #94a3b8;
-  --ql-text-muted: #64748b;
-  --ql-accent: #6366f1;
-  --ql-accent-hover: #818cf8;
-  --ql-accent-glow: rgba(99, 102, 241, 0.35);
-  --ql-accent-subtle: rgba(99, 102, 241, 0.14);
-  --ql-link: #818cf8;
-  --ql-gradient-primary: linear-gradient(135deg, #6366f1 0%, #818cf8 45%, #a855f7 100%);
-  --ql-gradient-shimmer: linear-gradient(90deg, #6366f1, #818cf8, #a855f7);
-  --ql-success: #34d399;
-  --ql-success-bg: rgba(52, 211, 153, 0.1);
-  --ql-warning: #fbbf24;
-  --ql-warning-bg: rgba(251, 191, 36, 0.1);
-  --ql-danger: #f87171;
-  --ql-danger-bg: rgba(248, 113, 113, 0.1);
-  --ql-radius: 12px;
-  --ql-radius-sm: 8px;
-  --ql-radius-xs: 6px;
-  --ql-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
-  --ql-shadow-hover: 0 32px 100px rgba(0, 0, 0, 0.55);
-  --ql-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --ql-glass: rgba(15, 21, 36, 0.88);
-  --ql-overlay: rgba(0, 0, 0, 0.65);
-  --ql-modal-bg: #131b2e;
-  --ql-modal-surface: #0f1524;
-  --ql-chat-bubble-end: #6366f1;
+  --ql-font-family: 'Share Tech Mono', 'JetBrains Mono', monospace;
+  --ql-font-mono: 'Share Tech Mono', 'JetBrains Mono', monospace;
+
+  --ql-bg: #050505; /* Black Terminal Background */
+  --ql-bg-elevated: #0d0d0d;
+  --ql-bg-surface: #141414;
+  --ql-bg-hover: #1e1e1e;
+  --ql-border: rgba(0, 255, 65, 0.2); /* Matrix Green border */
+  --ql-border-hover: rgba(0, 255, 65, 0.55); /* Glowing matrix green border */
+  --ql-text-primary: #00ff41; /* Neon green primary text */
+  --ql-text-secondary: #86efac; /* Mint green secondary text */
+  --ql-text-muted: #166534; /* Dark forest green muted text */
+  --ql-accent: #39ff14; /* Bright electric green */
+  --ql-accent-hover: #00ff66; /* Lime neon green */
+  --ql-accent-glow: rgba(0, 255, 65, 0.4);
+  --ql-accent-subtle: rgba(0, 255, 65, 0.08);
+  --ql-link: #39ff14;
+  --ql-gradient-primary: linear-gradient(135deg, #39ff14 0%, #00ff66 50%, #10b981 100%);
+  --ql-gradient-shimmer: linear-gradient(90deg, #39ff14, #00ff66, #10b981, #39ff14);
+  --ql-success: #39ff14;
+  --ql-success-bg: rgba(0, 255, 0, 0.1);
+  --ql-warning: #eab308;
+  --ql-warning-bg: rgba(234, 179, 8, 0.1);
+  --ql-danger: #ef4444;
+  --ql-danger-bg: rgba(239, 68, 68, 0.1);
+  --ql-radius: 4px;
+  --ql-radius-sm: 3px;
+  --ql-radius-xs: 2px;
+  --ql-shadow: 0 0 20px rgba(0, 255, 65, 0.08);
+  --ql-shadow-hover: 0 0 30px rgba(0, 255, 65, 0.2);
+  --ql-transition: 0.15s steps(4, end); /* Retro-step transitions */
+  --ql-glass: rgba(5, 5, 5, 0.95);
+  --ql-overlay: rgba(0, 0, 0, 0.85);
+  --ql-modal-bg: #0d0d0d;
+  --ql-modal-surface: #141414;
+  --ql-chat-bubble-end: #00ff41;
 }
 
 body.sp-light,
 #ql-floating.ql-light {
   color-scheme: light;
 
-  --ql-bg: #f8fafc;
+  --ql-font-family: 'Share Tech Mono', 'JetBrains Mono', monospace;
+  --ql-font-mono: 'Share Tech Mono', 'JetBrains Mono', monospace;
+
+  --ql-bg: #f0fdf4;
   --ql-bg-elevated: #ffffff;
-  --ql-bg-surface: #f1f5f9;
-  --ql-bg-hover: #e2e8f0;
-  --ql-border: rgba(15, 23, 42, 0.1);
-  --ql-border-hover: rgba(99, 102, 241, 0.35);
-  --ql-text-primary: #0f172a;
-  --ql-text-secondary: #475569;
-  --ql-text-muted: #64748b;
-  --ql-accent: #6366f1;
-  --ql-accent-hover: #4f46e5;
-  --ql-accent-glow: rgba(99, 102, 241, 0.22);
-  --ql-accent-subtle: rgba(99, 102, 241, 0.1);
-  --ql-link: #4f46e5;
-  --ql-gradient-primary: linear-gradient(135deg, #6366f1 0%, #818cf8 50%, #a855f7 100%);
-  --ql-gradient-shimmer: linear-gradient(90deg, #6366f1, #818cf8, #a855f7);
-  --ql-shadow: 0 16px 48px rgba(15, 23, 42, 0.08);
-  --ql-shadow-hover: 0 24px 64px rgba(15, 23, 42, 0.12);
-  --ql-glass: rgba(255, 255, 255, 0.92);
-  --ql-overlay: rgba(15, 23, 42, 0.4);
+  --ql-bg-surface: #dcfce7;
+  --ql-bg-hover: #bbf7d0;
+  --ql-border: rgba(22, 101, 52, 0.15);
+  --ql-border-hover: rgba(22, 101, 52, 0.4);
+  --ql-text-primary: #14532d;
+  --ql-text-secondary: #166534;
+  --ql-text-muted: #15803d;
+  --ql-accent: #16a34a;
+  --ql-accent-hover: #15803d;
+  --ql-accent-glow: rgba(22, 101, 52, 0.2);
+  --ql-accent-subtle: rgba(22, 101, 52, 0.06);
+  --ql-link: #15803d;
+  --ql-gradient-primary: linear-gradient(135deg, #16a34a 0%, #15803d 50%, #166534 100%);
+  --ql-gradient-shimmer: linear-gradient(90deg, #16a34a, #15803d, #166534);
+  --ql-shadow: 0 8px 24px rgba(22, 101, 5 green, 0.05);
+  --ql-shadow-hover: 0 12px 32px rgba(22, 101, 5 green, 0.08);
+  --ql-glass: rgba(255, 255, 255, 0.95);
+  --ql-overlay: rgba(22, 101, 52, 0.4);
   --ql-modal-bg: #ffffff;
-  --ql-modal-surface: #f8fafc;
-  --ql-chat-bubble-end: #6366f1;
+  --ql-modal-surface: #f0fdf4;
+  --ql-chat-bubble-end: #16a34a;
 }
 
-/* Side panel ambient background */
+/* Side panel background featuring a glowing digital terminal grid */
 body:not(.sp-light) {
   background:
-    radial-gradient(circle at 8% -8%, rgba(99, 102, 241, 0.12), transparent 34%),
-    radial-gradient(circle at 92% 0%, rgba(129, 140, 248, 0.1), transparent 32%),
+    linear-gradient(rgba(0, 255, 65, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.015) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(0, 255, 65, 0.06), transparent 75%),
     var(--ql-bg);
+  background-size: 24px 24px, 24px 24px, 100% 100%, 100% 100%;
 }
 
 body.sp-light {
@@ -358,3 +368,114 @@ body.sp-light {
   font-size: 10px;
   font-weight: 700;
 }
+
+/* --- Global Theme & Polish Enhancements --- */
+
+/* Apply the retro monospace font family and step transitions everywhere */
+body, 
+button, 
+input, 
+select, 
+textarea, 
+.sp-brand, 
+.sp-tab, 
+#ql-floating, 
+.ql-floating-panel, 
+.ql-panel,
+.sp-header,
+.sp-body,
+.sp-footer {
+  font-family: var(--ql-font-family) !important;
+}
+
+/* Green retro terminal custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 65, 0.25);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 65, 0.55);
+}
+
+/* Glowing green CRT monitor brand logo text with typing cursor */
+.sp-brand-text {
+  font-weight: 700 !important;
+  font-family: var(--ql-font-family) !important;
+  letter-spacing: -0.01em !important;
+  color: var(--ql-accent) !important;
+  text-shadow: 0 0 6px rgba(0, 255, 65, 0.6) !important;
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
+}
+
+.sp-brand-text::before {
+  content: "> " !important;
+  color: var(--ql-accent) !important;
+  opacity: 0.95;
+}
+
+.sp-brand-text::after {
+  content: "_" !important;
+  color: var(--ql-accent) !important;
+  animation: ql-blink 1s infinite steps(2, start) !important;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+@keyframes ql-blink {
+  to { visibility: hidden; }
+}
+
+/* Micro-animations and hover transitions for buttons and cards */
+.sp-btn-feature,
+.sp-modal-btn,
+.ql-btn,
+.sp-icon-btn,
+.ql-icon-btn,
+.pk-discord-cta {
+  transition: all var(--ql-transition) !important;
+}
+
+.sp-btn-feature:hover,
+.sp-modal-btn:hover,
+.ql-btn:hover,
+.pk-discord-cta:hover {
+  border-color: var(--ql-border-hover) !important;
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.3) !important;
+  filter: brightness(1.2) !important;
+  text-shadow: 0 0 4px rgba(0, 255, 65, 0.5) !important;
+}
+
+.sp-btn-feature:active,
+.sp-modal-btn:active,
+.ql-btn:active,
+.pk-discord-cta:active {
+  background: var(--ql-bg-surface) !important;
+}
+
+/* Retro terminal card outline panel container designs */
+.sp-pkg-card,
+.ql-pkg-card,
+.sp-notif-panel,
+.pk-publish-modal {
+  background: var(--ql-bg-elevated) !important;
+  border: 1px solid var(--ql-border) !important;
+  box-shadow: var(--ql-shadow) !important;
+  transition: border-color var(--ql-transition), box-shadow var(--ql-transition) !important;
+  border-radius: var(--ql-radius) !important;
+  backdrop-filter: none !important; /* Keep it raw terminal style */
+}
+
+.sp-pkg-card:hover,
+.ql-pkg-card:hover {
+  border-color: var(--ql-border-hover) !important;
+  box-shadow: var(--ql-shadow-hover) !important;
+}
+

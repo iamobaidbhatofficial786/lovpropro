@@ -118,16 +118,19 @@ HwIDAQAB
         });
       });
 
-      // Reload panel or page after brief pause
+      // Reload panel or page after brief pause (disabled to prevent refresh loops)
+      /*
       setTimeout(function() {
         if (typeof window !== "undefined" && window.location) {
           window.location.reload();
         }
       }, 800);
+      */
     });
   }
 
-  // 1. DevTools detection via window dimension discrepancies
+  // 1. DevTools detection via window dimension discrepancies (disabled to prevent refresh loops)
+  /*
   (function detectDevTools() {
     var threshold = 160;
     setInterval(function() {
@@ -139,8 +142,10 @@ HwIDAQAB
       }
     }, 2000);
   })();
+  */
 
-  // 2. Active debugging blocker
+  // 2. Active debugging blocker (disabled to prevent debugger interruption and reload loops)
+  /*
   (function debuggerLoop() {
     var start = Date.now();
     debugger;
@@ -150,8 +155,10 @@ HwIDAQAB
     }
     setTimeout(debuggerLoop, 1000);
   })();
+  */
 
-  // 3. API Hook/Override detection
+  // 3. API Hook/Override detection (disabled to prevent false positives from extension runtime environment)
+  /*
   function verifyFunctionIntegrity(fn, expectedName) {
     if (typeof fn !== "function") return false;
     var str = fn.toString();
@@ -166,6 +173,7 @@ HwIDAQAB
       onTamperingDetected("api_hooks_injected");
     }
   }, 3000);
+  */
 
   // Expose verification function globally
   window.verifyJwtClientSide = verifyJwtClientSide;

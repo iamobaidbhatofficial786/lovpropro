@@ -182,19 +182,62 @@
     });
   }
 
+  async function computeHmacSha256(secret, message) {
+    try {
+      const enc = new TextEncoder();
+      const keyData = enc.encode(secret);
+      const msgData = enc.encode(message);
+      const cryptoObj = window.crypto || crypto;
+      const key = await cryptoObj.subtle.importKey(
+        "raw",
+        keyData,
+        { name: "HMAC", hash: { name: "SHA-256" } },
+        false,
+        ["sign"]
+      );
+      const signatureBuffer = await cryptoObj.subtle.sign("HMAC", key, msgData);
+      const hashArray = Array.from(new Uint8Array(signatureBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (e) {
+      console.error("[Crypto] HMAC failed:", e);
+      return "";
+    }
+  }
+
   /** Headers for storage upload (backend validates license). */
-  function pkLicenseUploadHeaders(extra) {
+  function pkLicenseUploadHeaders(url, method, extra) {
+    var reqMethod = method || "POST";
     return pkReadLicenseStorage().then(function (stored) {
       if (!pkLocalLicenseReady(stored)) {
         throw new Error("Activate your PK- license key first.");
       }
       return pkResolveDeviceId().then(function (deviceId) {
-        return pkEnsureActiveLicense(false).then(function () {
-          return Object.assign({}, extra || {}, {
-            "x-license-key": resolveTeamLicenseKey(stored.ql_license_key),
+        return pkEnsureActiveLicense(false).then(async function () {
+          var licenseKey = resolveTeamLicenseKey(stored.ql_license_key);
+          var headers = Object.assign({}, extra || {}, {
+            "x-license-key": licenseKey,
             "x-session-id": stored.ql_session_id || "",
             "x-device-id": deviceId || ""
           });
+
+          // Add replay attack protection (nonce & timestamp)
+          const cryptoObj = window.crypto || crypto;
+          const nonce = Array.from(cryptoObj.getRandomValues(new Uint8Array(16)))
+            .map(b => b.toString(16).padStart(2, '0')).join('');
+          const timestamp = new Date().toISOString();
+          
+          headers["x-nonce"] = nonce;
+          headers["x-timestamp"] = timestamp;
+
+          if (url && licenseKey) {
+            // Binary uploads use empty body for signature matching
+            var stringToSign = [reqMethod.toUpperCase(), url, timestamp, nonce, ""].join('|');
+            var signature = await computeHmacSha256(licenseKey, stringToSign);
+            if (signature) {
+              headers["x-signature"] = signature;
+            }
+          }
+          return headers;
         });
       });
     });

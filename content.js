@@ -7,7 +7,7 @@ if (window !== window.top) {
   return;
 }
 
-console.log("[ContentScript] Lovable Powerkits loaded");
+console.log("[ContentScript] ByPass Ai loaded");
 
 const API_BASE = typeof POWERKITS_API_BASE !== "undefined" ? POWERKITS_API_BASE : GRINGOW_API_BASE;
 const API_KEY = typeof POWERKITS_API_KEY !== "undefined" ? POWERKITS_API_KEY : GRINGOW_API_KEY;
@@ -15,7 +15,7 @@ const PROXY_COMMAND_URL = (typeof window !== "undefined" && window.PROXY_COMMAND
   || (API_BASE + "/functions/v1/proxy-command");
 
 const DISCORD_URL = (typeof DISCORD_SUPPORT_URL !== "undefined" && DISCORD_SUPPORT_URL)
-  || "https://discord.gg/9ZBezyTEu5";
+  || "https://t.me/Iamsamkhanofficial";
 const VALIDATE_URL = API_BASE + "/functions/v1/validate-license";
 const OPTIMIZE_URL = API_BASE + "/functions/v1/optimize-prompt";
 const NOTIFICATIONS_URL = API_BASE + "/rest/v1/notifications?select=*&order=created_at.desc&limit=20";
@@ -374,16 +374,81 @@ function decodeJwtPayload(token) {
   }
 }
 
+async function computeHmacSha256(secret, message) {
+  try {
+    const enc = new TextEncoder();
+    const keyData = enc.encode(secret);
+    const msgData = enc.encode(message);
+    const cryptoObj = window.crypto || crypto;
+    const key = await cryptoObj.subtle.importKey(
+      "raw",
+      keyData,
+      { name: "HMAC", hash: { name: "SHA-256" } },
+      false,
+      ["sign"]
+    );
+    const signatureBuffer = await cryptoObj.subtle.sign("HMAC", key, msgData);
+    const hashArray = Array.from(new Uint8Array(signatureBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  } catch (e) {
+    console.error("[Crypto] HMAC failed:", e);
+    return "";
+  }
+}
+
 function bgFetch(url, options = {}) {
   const requireSuccess = options.requireSuccess === true;
   const vendorFeatureCompat = options.vendorFeatureCompat === true || options.featureUiCompat === true;
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     if (typeof POWERKITS_DEBUG !== "undefined" && POWERKITS_DEBUG) console.log("[QL] bgFetch ->", url);
+
+    // Auto-attach license headers, timestamp, nonce, and signature
+    const headers = Object.assign({}, options.headers || {});
+    try {
+      const stored = await new Promise(r => chrome.storage.local.get(["ql_license_key", "ql_session_id"], r));
+      const licenseKey = stored ? stored.ql_license_key || "" : "";
+      const sessionId = stored ? stored.ql_session_id || "" : "";
+      
+      let deviceId = "";
+      if (typeof getHardwareFingerprint === "function") {
+        deviceId = await getHardwareFingerprint();
+      } else if (typeof qlDeviceId !== "undefined") {
+        deviceId = qlDeviceId;
+      }
+
+      if (licenseKey) headers["x-license-key"] = licenseKey;
+      if (sessionId) headers["x-session-id"] = sessionId;
+      if (deviceId) headers["x-device-id"] = deviceId;
+
+      // Add replay attack protection (nonce & timestamp)
+      const cryptoObj = window.crypto || crypto;
+      const nonce = Array.from(cryptoObj.getRandomValues(new Uint8Array(16)))
+        .map(b => b.toString(16).padStart(2, '0')).join('');
+      const timestamp = new Date().toISOString();
+      
+      headers["x-nonce"] = nonce;
+      headers["x-timestamp"] = timestamp;
+
+      // Generate signature
+      const method = options.method || "POST";
+      const bodyStr = options.body ? (typeof options.body === "string" ? options.body : JSON.stringify(options.body)) : "";
+      const stringToSign = [method.toUpperCase(), url, timestamp, nonce, bodyStr].join('|');
+      
+      // Use licenseKey as signature key if available, else fallback to API key
+      const signKey = licenseKey || API_KEY || "";
+      const signature = await computeHmacSha256(signKey, stringToSign);
+      if (signature) {
+        headers["x-signature"] = signature;
+      }
+    } catch (err) {
+      console.warn("[bgFetch] Failed to sign request:", err);
+    }
+
     chrome.runtime.sendMessage({
       action: "proxyFetch",
       url,
       method: options.method || "POST",
-      headers: options.headers || {},
+      headers: headers,
       body: options.body || null,
     }, (resp) => {
       if (chrome.runtime.lastError) {
@@ -407,6 +472,13 @@ function bgFetch(url, options = {}) {
         const errText = (data && (data.error_display || data.message || data.error))
           || (data && data.raw)
           || ("Request failed (HTTP " + resp.status + ")");
+        
+        if (resp.status === 401 || resp.status === 403) {
+          if (typeof qlHandleLicenseInvalid === "function") {
+            qlHandleLicenseInvalid({ reason: "revoked", message: errText });
+          }
+        }
+
         return reject(new Error(formatApiError(errText)));
       }
 
@@ -737,13 +809,13 @@ function showCustomAlert(title, message){
   if(!alert) {
     alert = document.createElement("div");
     alert.id = "ql-custom-alert";
-    alert.style.cssText = "position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: flex; align-items: center; justify-content: center; z-index: 100000; backdrop-filter: blur(8px); font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;";
+    alert.style.cssText = "position: fixed; inset: 0; background: var(--ql-overlay, rgba(3,7,18,0.7)); display: flex; align-items: center; justify-content: center; z-index: 100000; backdrop-filter: blur(12px); font-family: var(--ql-font-family, sans-serif);";
     alert.innerHTML = `
-      <div style="background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 24px 20px; text-align: center; width: 85%; max-width: 300px; color: #fff; box-shadow: 0 16px 48px rgba(0,0,0,0.5);">
+      <div style="background: var(--ql-bg-elevated, #0b1329); border: 1px solid var(--ql-border, rgba(6,182,212,0.15)); border-radius: var(--ql-radius, 14px); padding: 26px 22px; text-align: center; width: 85%; max-width: 320px; color: var(--ql-text-primary, #fff); box-shadow: var(--ql-shadow, 0 20px 50px rgba(0,0,0,0.55));">
         <div style="font-size: 32px; margin-bottom: 12px;">⚠️</div>
-        <div class="ql-alert-title" style="font-size: 15px; font-weight: 700; margin-bottom: 8px;"></div>
-        <div class="ql-alert-message" style="font-size: 12px; color: #a1a1aa; margin-bottom: 18px; line-height: 1.5; text-align: center;"></div>
-        <button class="ql-alert-ok-btn" style="padding: 10px 28px; border: none; border-radius: 8px; background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.2s;">OK</button>
+        <div class="ql-alert-title" style="font-size: 16px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em;"></div>
+        <div class="ql-alert-message" style="font-size: 12px; color: var(--ql-text-secondary, #cbd5e1); margin-bottom: 20px; line-height: 1.6; text-align: center;"></div>
+        <button class="ql-alert-ok-btn" style="padding: 11px 28px; border: none; border-radius: var(--ql-radius-sm, 10px); background: var(--ql-gradient-primary, linear-gradient(135deg, #06b6d4, #6366f1)); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; transition: all var(--ql-transition, 0.22s); outline: none;">OK</button>
       </div>
     `;
     document.body.appendChild(alert);
@@ -1388,7 +1460,7 @@ function injectShieldOverlay(){
   overlay.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
       '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' +
     '</svg>' +
-    '<span class="ql-shield-overlay-text">🛡️ Protected by Lovable Powerkits</span>' +
+    '<span class="ql-shield-overlay-text">🛡️ Protected by ByPass Ai</span>' +
     '<span class="ql-shield-overlay-sub">Use the extension to send prompts</span>';
 
   overlay.addEventListener('click', (e) => {
@@ -1775,6 +1847,49 @@ if (typeof SIDE_PANEL_ONLY !== "undefined" && SIDE_PANEL_ONLY) {
 
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== "local") return;
+
+    if (changes.ql_license_valid) {
+      const box = document.getElementById("ql-floating");
+      if (changes.ql_license_valid.newValue) {
+        chrome.storage.local.get([
+          "ql_license_key",
+          "ql_user_name",
+          "ql_expires_at",
+          "ql_activated_at",
+          "ql_license_status",
+          "ql_validity_minutes",
+          "ql_session_id"
+        ], (res) => {
+          qlUserName = normalizeLicenseUserName(res.ql_user_name);
+          qlExpiresAt = res.ql_expires_at || null;
+          qlActivatedAt = res.ql_activated_at || null;
+          qlLicenseStatus = res.ql_license_status || null;
+          qlValidityMinutes = res.ql_validity_minutes != null ? res.ql_validity_minutes : null;
+          qlSessionId = res.ql_session_id || null;
+          
+          setPkCreditBypass(true);
+          if (box) showMainUI(box);
+          if (res.ql_license_key) {
+            startHeartbeat(res.ql_license_key);
+          }
+        });
+      } else {
+        qlUserName = "";
+        qlExpiresAt = null;
+        qlActivatedAt = null;
+        qlLicenseStatus = null;
+        qlValidityMinutes = null;
+        qlSessionId = null;
+        
+        setPkCreditBypass(false);
+        if (qlHeartbeatInterval) {
+          clearInterval(qlHeartbeatInterval);
+          qlHeartbeatInterval = null;
+        }
+        if (box) showLicenseGate(box);
+      }
+    }
+
     if (typeof SIDE_PANEL_ONLY !== "undefined" && SIDE_PANEL_ONLY) return;
     if(changes.ql_sidebar_mode) {
       if(changes.ql_sidebar_mode.newValue === true) {
@@ -2116,7 +2231,7 @@ async function uploadFileDirect(file, token) {
   const objectKey = buildObjectKey(fileId, file);
   const uploadUrl = API_BASE + '/storage/v1/object/prompt-images/' + objectKey;
   const licenseHdrs = typeof pkLicenseUploadHeaders === "function"
-    ? await pkLicenseUploadHeaders()
+    ? await pkLicenseUploadHeaders(uploadUrl, 'POST')
     : {};
 
   await new Promise(function(resolve, reject){
@@ -2129,6 +2244,9 @@ async function uploadFileDirect(file, token) {
     if (licenseHdrs['x-license-key']) xhr.setRequestHeader('x-license-key', licenseHdrs['x-license-key']);
     if (licenseHdrs['x-session-id']) xhr.setRequestHeader('x-session-id', licenseHdrs['x-session-id']);
     if (licenseHdrs['x-device-id']) xhr.setRequestHeader('x-device-id', licenseHdrs['x-device-id']);
+    if (licenseHdrs['x-signature']) xhr.setRequestHeader('x-signature', licenseHdrs['x-signature']);
+    if (licenseHdrs['x-nonce']) xhr.setRequestHeader('x-nonce', licenseHdrs['x-nonce']);
+    if (licenseHdrs['x-timestamp']) xhr.setRequestHeader('x-timestamp', licenseHdrs['x-timestamp']);
     xhr.onload = function(){
       if (xhr.status >= 200 && xhr.status < 300) resolve(true);
       else reject(new Error('Upload failed: ' + xhr.status + ' ' + (xhr.responseText || '')));
@@ -2742,7 +2860,7 @@ function injectNativeChatOverlay() {
     const badge = document.createElement("div");
     badge.id = "ql-native-badge";
     badge.className = "ql-native-badge";
-    badge.innerHTML = "⚡ <span>Lovable Powerkits</span>";
+    badge.innerHTML = "⚡ <span>ByPass Ai</span>";
     chatForm.appendChild(badge);
   }
 

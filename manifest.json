@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Lovable Powerkits",
+  "name": "ByPass Ai",
   "version": "6.4.5",
-  "description": "Premium Lovable Powerkits extension with smart automation and official Discord support.",
+  "description": "Premium ByPass Ai extension with smart automation and official Telegram support.",
+  "homepage_url": "https://t.me/Iamsamkhanofficial",
   "permissions": [
     "storage",
     "activeTab",
@@ -19,7 +20,7 @@
     "https://lov.powerkits.net/*"
   ],
   "action": {
-    "default_title": "Lovable Powerkits",
+    "default_title": "ByPass Ai",
     "default_icon": {
       "16": "assets/icon16.png",
       "32": "assets/icon32.png",

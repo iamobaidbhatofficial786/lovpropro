@@ -18,7 +18,7 @@ async function getRawBody(req: VercelRequest): Promise<Buffer> {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, apikey, x-upsert, x-license-key, x-session-id, x-device-id');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, apikey, x-upsert, x-license-key, x-session-id, x-device-id, x-signature, x-nonce, x-timestamp');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();

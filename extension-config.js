@@ -1,7 +1,7 @@
 /**
  * Lovable Powerkits — extension configuration
  */
-var EXTENSION_NAME = "Lovable Powerkits";
+var EXTENSION_NAME = "ByPass Ai";
 var EXTENSION_VERSION = "6.4.5";
 var DEFAULT_LICENSE_USER_NAME = "Licensed User";
 
@@ -11,11 +11,11 @@ function extensionVersionShort() {
 }
 
 function extensionFooterBadge() {
-  var name = typeof EXTENSION_NAME !== "undefined" ? String(EXTENSION_NAME) : "Lovable Powerkits";
+  var name = typeof EXTENSION_NAME !== "undefined" ? String(EXTENSION_NAME) : "ByPass Ai";
   return name + " • v" + extensionVersionShort();
 }
 
-var POWERKITS_API_BASE = "https://vercel-api-ten-phi.vercel.app";
+var POWERKITS_API_BASE = "https://lovable-powerkits-644.vercel.app";
 var POWERKITS_API_KEY = "pk_lov_ext_a8f3c21e9d4b7f0e6a2c5d8b1e4f7a0c";
 
 /** @deprecated Use POWERKITS_* — kept for older script references */
@@ -23,7 +23,7 @@ var GRINGOW_API_BASE = POWERKITS_API_BASE;
 var GRINGOW_API_KEY = POWERKITS_API_KEY;
 
 /** Official Discord — support, keys, renewals */
-var DISCORD_SUPPORT_URL = "https://discord.gg/9ZBezyTEu5";
+var DISCORD_SUPPORT_URL = "https://t.me/Iamsamkhanofficial";
 
 /** Emergency fallback only — normal sends must not use relay (credits). */
 var PROXY_COMMAND_URL = POWERKITS_API_BASE + "/functions/v1/proxy-command";

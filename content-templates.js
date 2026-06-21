@@ -1,5 +1,5 @@
 // ============================================
-// Lovable Powerkits – HTML Templates (content)
+// ByPass Ai – HTML Templates (content)
 // Separated from business logic (content.js)
 // ============================================
 
@@ -24,7 +24,7 @@ const SVG_ICONS = {
 
 var QL_DISCORD_SUPPORT = (typeof DISCORD_SUPPORT_URL !== "undefined" && DISCORD_SUPPORT_URL)
   ? DISCORD_SUPPORT_URL
-  : "https://discord.gg/9ZBezyTEu5";
+  : "https://t.me/Iamsamkhanofficial";
 
 const PROMPT_TEMPLATES = [
   { icon: SVG_ICONS.wrench, label: "Bugs", prompt: "Analyze the code and identify all bugs, errors, and failures. Fix each one and explain the problem and the solution applied." },
@@ -43,7 +43,7 @@ function templateLicenseGate(minimized) {
   return '<div id="ql-header">' +
     '<div class="ql-header-left">' +
       '<span class="ql-dot"></span>' +
-      '<img class="ql-title-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span class="ql-title">Lovable Powerkits</span>' +
+      '<img class="ql-title-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span class="ql-title">ByPass Ai</span>' +
     '</div>' +
     '<div class="ql-header-right">' +
        '<span class="ql-badge">v' + extensionVersionShort() + '</span>' +
@@ -54,14 +54,14 @@ function templateLicenseGate(minimized) {
     '<div class="ql-license-gate">' +
       '<div class="ql-lock-icon">🔐</div>' +
       '<p class="ql-gate-title">Activate License</p>' +
-      '<p class="ql-gate-desc">Enter your license key to activate. Paste the key you received from Discord support or your reseller.</p>' +
+      '<p class="ql-gate-desc">Enter your license key to activate. Paste the key you received from Telegram support or your reseller.</p>' +
       '<div class="ql-field">' +
         '<input id="ql-license-input" placeholder="Your license key" spellcheck="false">' +
       '</div>' +
       '<button id="ql-validate-btn">Validate License</button>' +
       '<div id="ql-license-log"></div>' +
-      '<div class="ql-gate-divider"><span>Discord support</span></div>' +
-      '<a href="' + QL_DISCORD_SUPPORT + '" target="_blank" rel="noopener noreferrer" class="ql-buy-btn" style="display:block;text-align:center;text-decoration:none">🔑 Request your key via Discord</a>' +
+      '<div class="ql-gate-divider"><span>Telegram support</span></div>' +
+      '<a href="' + QL_DISCORD_SUPPORT + '" target="_blank" rel="noopener noreferrer" class="ql-buy-btn" style="display:block;text-align:center;text-decoration:none">🔑 Request your key via Telegram</a>' +
     '</div>' +
   '</div>' +
   '<div id="ql-resize-handle" class="ql-resize-handle"></div>';
@@ -71,7 +71,7 @@ function templateLicenseGate(minimized) {
 function templateMainUI(greeting, statusBadge, minimized) {
   return '<div id="ql-header">' +
     '<div class="ql-header-left">' +
-      '<span class="ql-brand"><img class="ql-brand-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span>Lovable Powerkits</span></span>' +
+      '<span class="ql-brand"><img class="ql-brand-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span>ByPass Ai</span></span>' +
       '<span class="ql-badge-pro-header">PRO</span>' +
     '</div>' +
     '<div class="ql-header-right">' +
@@ -98,7 +98,7 @@ function templateMainUI(greeting, statusBadge, minimized) {
     '</div>' +
     '<div id="ql-reseller-btn" style="display:none;margin-bottom:14px">' +
       '<a href="' + QL_DISCORD_SUPPORT + '" target="_blank" rel="noopener noreferrer" class="pk-discord-cta">' +
-        '🔑 Request your key via Discord<span style="margin-left:auto;font-size:10px;opacity:0.6">→</span>' +
+        '🔑 Request your key via Telegram<span style="margin-left:auto;font-size:10px;opacity:0.6">→</span>' +
       '</a>' +
     '</div>' +
     '<!-- Tabs -->' +
@@ -150,7 +150,7 @@ function templateMainUI(greeting, statusBadge, minimized) {
       '<a href="' + QL_DISCORD_SUPPORT + '" target="_blank" class="ql-support-link">' + SVG_ICONS.headphones + ' Support</a>' +
        '<span class="ql-footer-version">v' + extensionVersionShort() + '</span>' +
     '</div>' +
-    '<span class="ql-badge-mz">Lovable Powerkits</span>' +
+    '<span class="ql-badge-mz">ByPass Ai</span>' +
   '</div>' +
   '<div id="ql-resize-handle" class="ql-resize-handle"></div>' +
   '<!-- Notifications Panel -->' +
@@ -179,9 +179,9 @@ function templateExpiredOverlay() {
   return '<div class="ql-sweetalert-box">' +
     '<div class="ql-sweetalert-icon">⏰</div>' +
     '<h2 class="ql-sweetalert-title">License Expired!</h2>' +
-    '<p class="ql-sweetalert-text">Your license has expired. Open Discord support to renew it.</p>' +
+    '<p class="ql-sweetalert-text">Your license has expired. Open Telegram support to renew it.</p>' +
     '<div class="ql-sweetalert-actions">' +
-      '<button class="ql-sweetalert-btn ql-sweetalert-btn-primary" id="ql-sweetalert-renew">🌐 Open Discord</button>' +
+      '<button class="ql-sweetalert-btn ql-sweetalert-btn-primary" id="ql-sweetalert-renew">🌐 Open Telegram</button>' +
       '<button class="ql-sweetalert-btn ql-sweetalert-btn-secondary" id="ql-sweetalert-close">Close</button>' +
     '</div>' +
   '</div>';
@@ -223,18 +223,18 @@ function templateBrlCard(plan, idx) {
     '<div class="ql-pkg-mzn">≈ ' + qlFmtMzn(plan.price) + ' MZN <span>(approx. exchange rate)</span></div>' +
     '<div class="ql-pkg-duration">' + escapeHtml(plan.period) + '</div>' +
     '<ul class="ql-pkg-features">' + features + '</ul>' +
-    '<button class="ql-pkg-select-btn ql-brl-buy">💬 Open Discord</button>' +
+    '<button class="ql-pkg-select-btn ql-brl-buy">💬 Open Telegram</button>' +
   '</div>';
 }
 function templateBrlSection() {
   var cards = QL_BRL_PLANS.map(function(p, i){ return templateBrlCard(p, i); }).join('');
-  return '<div class="ql-pay-divider"><span>Discord support</span></div>' +
+  return '<div class="ql-pay-divider"><span>Telegram support</span></div>' +
     '<div class="ql-packages-list ql-brl-list">' + cards + '</div>';
 }
 function templatePaymentUI(minimized) {
   return '<div id="ql-header">' +
     '<div class="ql-header-left">' +
-      '<span class="ql-brand"><img class="ql-brand-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span>Lovable Powerkits</span></span>' +
+      '<span class="ql-brand"><img class="ql-brand-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span>ByPass Ai</span></span>' +
     '</div>' +
     '<div class="ql-header-right">' +
       '<button id="ql-pay-back" class="ql-icon-btn" title="Back">←</button>' +
@@ -243,11 +243,11 @@ function templatePaymentUI(minimized) {
   '</div>' +
   '<div id="ql-body">' +
     '<div class="ql-pay-section">' +
-      '<div class="ql-pay-title">Open Discord support</div>' +
+      '<div class="ql-pay-title">Open Telegram support</div>' +
       templateBrlSection() +
-      '<div class="ql-pay-divider"><span>Discord support</span></div>' +
+      '<div class="ql-pay-divider"><span>Telegram support</span></div>' +
       '<div id="ql-packages-list" class="ql-packages-list">' +
-        '<div class="ql-pay-loading">⏳ Open Discord Support</div>' +
+        '<div class="ql-pay-loading">⏳ Open Telegram Support</div>' +
       '</div>' +
     '</div>' +
   '</div>' +
@@ -265,7 +265,7 @@ function templatePackageCard(pkg) {
     '<div class="ql-pkg-price">' + '' + '</div>' +
     '<div class="ql-pkg-duration">' + duration + '</div>' +
     '<ul class="ql-pkg-features">' + features + '</ul>' +
-    '<button class="ql-pkg-select-btn">Open Discord</button>' +
+    '<button class="ql-pkg-select-btn">Open Telegram</button>' +
   '</div>';
 }
 
@@ -273,7 +273,7 @@ function templatePackageCard(pkg) {
 function templateCheckoutScreen(pkg, minimized) {
   return '<div id="ql-header">' +
     '<div class="ql-header-left">' +
-      '<span class="ql-brand"><img class="ql-brand-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span>Discord Support</span></span>' +
+      '<span class="ql-brand"><img class="ql-brand-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span>Telegram Support</span></span>' +
     '</div>' +
     '<div class="ql-header-right">' +
       '<button id="ql-checkout-back" class="ql-icon-btn" title="Back">←</button>' +
@@ -282,11 +282,11 @@ function templateCheckoutScreen(pkg, minimized) {
   '</div>' +
   '<div id="ql-body">' +
     '<div class="ql-pay-section" style="text-align:center">' +
-      '<div class="ql-pay-title">Request your license key on Discord</div>' +
+      '<div class="ql-pay-title">Request your license key on Telegram</div>' +
       '<div class="ql-selected-pkg">📦 <strong>' + escapeHtml(pkg.name || 'Selected plan') + '</strong></div>' +
-      '<p style="color:var(--ql-text-secondary);font-size:12px;line-height:1.5;margin:10px 0 16px">Support and license purchases are handled through the official Discord server.</p>' +
-      '<a href="' + QL_DISCORD_SUPPORT + '" target="_blank" rel="noopener noreferrer" class="ql-confirm-pay-btn" style="display:block;text-decoration:none;margin-bottom:10px">💬 Open Discord Support</a>' +
-      '<button id="ql-confirm-pay" class="ql-buy-btn" style="font-size:12px;width:100%">Open Discord</button>' +
+      '<p style="color:var(--ql-text-secondary);font-size:12px;line-height:1.5;margin:10px 0 16px">Support and license purchases are handled through our official Telegram.</p>' +
+      '<a href="' + QL_DISCORD_SUPPORT + '" target="_blank" rel="noopener noreferrer" class="ql-confirm-pay-btn" style="display:block;text-decoration:none;margin-bottom:10px">💬 Open Telegram Support</a>' +
+      '<button id="ql-confirm-pay" class="ql-buy-btn" style="font-size:12px;width:100%">Open Telegram</button>' +
       '<div id="ql-pay-log" class="ql-pay-log"></div>' +
     '</div>' +
   '</div>' +
@@ -297,7 +297,7 @@ function templateCheckoutScreen(pkg, minimized) {
 function templatePaymentSuccess(licenseKey) {
   return '<div class="ql-pay-section" style="text-align:center;padding:24px 16px">' +
     '<div style="font-size:48px;margin-bottom:12px">🎉</div>' +
-    '<div class="ql-pay-title">Discord Support Confirmed!</div>' +
+    '<div class="ql-pay-title">Telegram Support Confirmed!</div>' +
     '<p style="color:var(--ql-muted);font-size:12px;margin:8px 0 16px">Your license was activated successfully.</p>' +
     '<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;margin-bottom:12px">' +
       '<p style="font-size:10px;color:var(--ql-muted);margin-bottom:4px">Your license key</p>' +
