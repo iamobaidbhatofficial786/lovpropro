@@ -75,13 +75,25 @@ export async function POST(request: Request) {
     if (customer_email) insertPayload.customer_email = customer_email;
     if (plan) insertPayload.plan = plan;
 
-    const { data: license, error } = await supabase
+    let insertResult = await supabase
       .from('licenses')
       .insert(insertPayload)
       .select('*')
       .single();
 
-    if (error) throw error;
+    if (insertResult.error && /admin_message|support_url/i.test(insertResult.error.message || '')) {
+      const fallbackPayload = { ...insertPayload };
+      delete fallbackPayload.admin_message;
+      delete fallbackPayload.support_url;
+      insertResult = await supabase
+        .from('licenses')
+        .insert(fallbackPayload)
+        .select('*')
+        .single();
+    }
+
+    if (insertResult.error) throw insertResult.error;
+    const license = insertResult.data;
 
     // Return the raw key to show the user ONCE
     return NextResponse.json({ success: true, license, rawKey });
@@ -120,14 +132,27 @@ export async function PATCH(request: Request) {
     }
 
     const supabase = getSupabaseAdmin();
-    const { data: license, error } = await supabase
+    let updateResult = await supabase
       .from('licenses')
       .update(updates)
       .eq('id', id)
       .select('*')
       .single();
 
-    if (error) throw error;
+    if (updateResult.error && /admin_message|support_url/i.test(updateResult.error.message || '')) {
+      const fallbackUpdates = { ...updates };
+      delete fallbackUpdates.admin_message;
+      delete fallbackUpdates.support_url;
+      updateResult = await supabase
+        .from('licenses')
+        .update(fallbackUpdates)
+        .eq('id', id)
+        .select('*')
+        .single();
+    }
+
+    if (updateResult.error) throw updateResult.error;
+    const license = updateResult.data;
 
     return NextResponse.json({ success: true, license });
   } catch (err: any) {
