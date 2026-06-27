@@ -69,6 +69,18 @@ export default function LicensesPage() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('admin_token');
+      
+      let parsedExpiry = null;
+      if (expiresAt) {
+        const d = new Date(expiresAt);
+        if (!isNaN(d.getTime())) {
+          parsedExpiry = d.toISOString();
+        } else {
+          alert('Invalid expiration date.');
+          return;
+        }
+      }
+
       const res = await fetch('/api/admin/licenses', {
         method: 'POST',
         headers: {
@@ -81,7 +93,7 @@ export default function LicensesPage() {
           customer_name: customerName,
           customer_email: customerEmail,
           max_devices: maxDevices,
-          expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
+          expires_at: parsedExpiry,
           notes,
           admin_message: adminMessage,
           support_url: supportUrl,
@@ -103,9 +115,12 @@ export default function LicensesPage() {
         setNotes('');
         setAdminMessage('');
         setSupportUrl('');
+      } else {
+        alert(data.error || 'Failed to create license key.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      alert('Network error: ' + (err.message || 'Failed to create license key.'));
     }
   };
 
@@ -115,6 +130,18 @@ export default function LicensesPage() {
 
     try {
       const token = localStorage.getItem('admin_token');
+
+      let parsedExpiry = null;
+      if (expiresAt) {
+        const d = new Date(expiresAt);
+        if (!isNaN(d.getTime())) {
+          parsedExpiry = d.toISOString();
+        } else {
+          alert('Invalid expiration date.');
+          return;
+        }
+      }
+
       const res = await fetch('/api/admin/licenses', {
         method: 'PATCH',
         headers: {
@@ -128,7 +155,7 @@ export default function LicensesPage() {
           customer_name: customerName,
           customer_email: customerEmail,
           max_devices: maxDevices,
-          expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
+          expires_at: parsedExpiry,
           notes,
           status,
           admin_message: adminMessage,
@@ -136,12 +163,16 @@ export default function LicensesPage() {
         }),
       });
 
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
         setEditModalOpen(false);
         fetchLicenses();
+      } else {
+        alert(data.error || 'Failed to update license details.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      alert('Network error: ' + (err.message || 'Failed to update license details.'));
     }
   };
 

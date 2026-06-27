@@ -310,21 +310,37 @@
     }
 
     async function createLicense() {
-      const body = {
-        customer_name: document.getElementById('c-name').value.trim(),
-        customer_email: document.getElementById('c-email').value.trim(),
-        plan: document.getElementById('c-plan').value.trim() || 'pro',
-        max_devices: parseInt(document.getElementById('c-devices').value, 10) || 1,
-        expires_at: document.getElementById('c-expires').value ? new Date(document.getElementById('c-expires').value).toISOString() : null
-      };
-      const r = await fetch(API + '/api/admin/licenses', { method: 'POST', headers: headers(), body: JSON.stringify(body) });
-      const d = await r.json();
-      if (!d.success) return flash(d.error || d.message || 'Failed', false);
-      lastKey = d.license_key || d.rawKey;
-      document.getElementById('new-key-text').textContent = lastKey;
-      document.getElementById('new-key').classList.remove('hidden');
-      flash('License created for ' + (body.customer_name || 'user') + '.', true);
-      loadLicenses();
+      try {
+        let expires_at = null;
+        const expVal = document.getElementById('c-expires').value;
+        if (expVal) {
+          const d = new Date(expVal);
+          if (!isNaN(d.getTime())) {
+            expires_at = d.toISOString();
+          } else {
+            return flash('Invalid expiration date.', false);
+          }
+        }
+
+        const body = {
+          customer_name: document.getElementById('c-name').value.trim(),
+          customer_email: document.getElementById('c-email').value.trim(),
+          plan: document.getElementById('c-plan').value.trim() || 'pro',
+          max_devices: parseInt(document.getElementById('c-devices').value, 10) || 1,
+          expires_at: expires_at
+        };
+        const r = await fetch(API + '/api/admin/licenses', { method: 'POST', headers: headers(), body: JSON.stringify(body) });
+        const d = await r.json();
+        if (!d.success) return flash(d.error || d.message || 'Failed', false);
+        lastKey = d.license_key || d.rawKey;
+        document.getElementById('new-key-text').textContent = lastKey;
+        document.getElementById('new-key').classList.remove('hidden');
+        flash('License created for ' + (body.customer_name || 'user') + '.', true);
+        loadLicenses();
+      } catch (e) {
+        console.error(e);
+        flash('Error generating key: ' + (e.message || 'connection failed'), false);
+      }
     }
 
     function copyKey() {
