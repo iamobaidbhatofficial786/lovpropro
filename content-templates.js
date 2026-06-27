@@ -26,6 +26,34 @@ var QL_DISCORD_SUPPORT = (typeof DISCORD_SUPPORT_URL !== "undefined" && DISCORD_
   ? DISCORD_SUPPORT_URL
   : "https://t.me/Iamsamkhanofficial";
 
+const QL_ANIMATED_LOGO_SVG = '<svg class="ql-brand-logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
+  '<defs>' +
+    '<filter id="logo-glow" x="-20%" y="-20%" width="140%" height="140%">' +
+      '<feGaussianBlur stdDeviation="6" result="blur" />' +
+      '<feMerge>' +
+        '<feMergeNode in="blur" />' +
+        '<feMergeNode in="SourceGraphic" />' +
+      '</feMerge>' +
+    '</filter>' +
+    '<linearGradient id="logo-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">' +
+      '<stop offset="0%" stop-color="var(--ql-accent, #6366f1)" />' +
+      '<stop offset="100%" stop-color="#a855f7" />' +
+    '</linearGradient>' +
+    '<linearGradient id="logo-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">' +
+      '<stop offset="0%" stop-color="#3b82f6" />' +
+      '<stop offset="100%" stop-color="var(--ql-accent, #6366f1)" />' +
+    '</linearGradient>' +
+  '</defs>' +
+  '<circle cx="50" cy="50" r="42" fill="none" stroke="url(#logo-grad-1)" stroke-width="3" opacity="0.15" />' +
+  '<circle class="logo-ring-outer" cx="50" cy="50" r="40" fill="none" stroke="url(#logo-grad-1)" stroke-width="4" stroke-linecap="round" stroke-dasharray="180 60" />' +
+  '<path class="logo-bypass-path-1" d="M 15 50 C 35 20, 65 20, 85 50" fill="none" stroke="url(#logo-grad-2)" stroke-width="6" stroke-linecap="round" />' +
+  '<path class="logo-bypass-path-2" d="M 85 50 C 65 80, 35 80, 15 50" fill="none" stroke="url(#logo-grad-2)" stroke-width="6" stroke-linecap="round" />' +
+  '<path class="logo-flow-pulse-1" d="M 15 50 C 35 20, 65 20, 85 50" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" filter="url(#logo-glow)" opacity="0.9" />' +
+  '<path class="logo-flow-pulse-2" d="M 85 50 C 65 80, 35 80, 15 50" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" filter="url(#logo-glow)" opacity="0.9" />' +
+  '<circle class="logo-core" cx="50" cy="50" r="14" fill="url(#logo-grad-1)" filter="url(#logo-glow)" />' +
+  '<circle class="logo-core-inner" cx="50" cy="50" r="7" fill="#ffffff" />' +
+'</svg>';
+
 const PROMPT_TEMPLATES = [
   { icon: SVG_ICONS.wrench, label: "Bugs", prompt: "Analyze the code and identify all bugs, errors, and failures. Fix each one and explain the problem and the solution applied." },
   { icon: SVG_ICONS.edit, label: "Refactor", prompt: "Create a complete step-by-step refactoring and system optimization plan." },
@@ -43,7 +71,7 @@ function templateLicenseGate(minimized) {
   return '<div id="ql-header">' +
     '<div class="ql-header-left">' +
       '<span class="ql-dot"></span>' +
-      '<img class="ql-title-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span class="ql-title">ByPass Ai</span>' +
+      QL_ANIMATED_LOGO_SVG + '<span class="ql-title">ByPass Ai</span>' +
     '</div>' +
     '<div class="ql-header-right">' +
        '<span class="ql-badge">v' + extensionVersionShort() + '</span>' +
@@ -71,7 +99,7 @@ function templateLicenseGate(minimized) {
 function templateMainUI(greeting, statusBadge, minimized) {
   return '<div id="ql-header">' +
     '<div class="ql-header-left">' +
-      '<span class="ql-brand"><img class="ql-brand-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span>ByPass Ai</span></span>' +
+      '<span class="ql-brand">' + QL_ANIMATED_LOGO_SVG + '<span>ByPass Ai</span></span>' +
       '<span class="ql-badge-pro-header">PRO</span>' +
     '</div>' +
     '<div class="ql-header-right">' +
@@ -234,7 +262,7 @@ function templateBrlSection() {
 function templatePaymentUI(minimized) {
   return '<div id="ql-header">' +
     '<div class="ql-header-left">' +
-      '<span class="ql-brand"><img class="ql-brand-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span>ByPass Ai</span></span>' +
+      '<span class="ql-brand">' + QL_ANIMATED_LOGO_SVG + '<span>ByPass Ai</span></span>' +
     '</div>' +
     '<div class="ql-header-right">' +
       '<button id="ql-pay-back" class="ql-icon-btn" title="Back">←</button>' +
@@ -273,7 +301,7 @@ function templatePackageCard(pkg) {
 function templateCheckoutScreen(pkg, minimized) {
   return '<div id="ql-header">' +
     '<div class="ql-header-left">' +
-      '<span class="ql-brand"><img class="ql-brand-logo" src="' + chrome.runtime.getURL('assets/logo-master-lovable-square.png') + '" alt=""><span>Telegram Support</span></span>' +
+      '<span class="ql-brand">' + QL_ANIMATED_LOGO_SVG + '<span>Telegram Support</span></span>' +
     '</div>' +
     '<div class="ql-header-right">' +
       '<button id="ql-checkout-back" class="ql-icon-btn" title="Back">←</button>' +

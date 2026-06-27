@@ -78,7 +78,12 @@ async function build() {
         stringArray: true,
         stringArrayEncoding: ['base64'],
         stringArrayThreshold: 0.8,
-        unicodeEscapeSequence: false
+        unicodeEscapeSequence: false,
+        selfDefending: true,
+        debugProtection: true,
+        debugProtectionInterval: 4000,
+        disableConsoleOutput: true,
+        splitStrings: true
       });
 
       await fs.writeFile(filePath, obfuscationResult.getObfuscatedCode(), 'utf8');

@@ -79,9 +79,6 @@
     {
       "resources": [
         "pageHook.js",
-        "sounds/error-payment.mp3",
-        "sounds/error-ratelimit.mp3",
-        "sounds/error-token.mp3",
         "assets/logo-master-lovable.png",
         "assets/logo-master-lovable-square.png",
         "assets/icon16.png",

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Powerkits License Admin</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>
+    :root {
+      --bg: #070a13;
+      --card: rgba(15, 23, 42, 0.75);
+      --border: rgba(99, 102, 241, 0.16);
+      --border-hover: rgba(139, 92, 246, 0.4);
+      --brand: #818cf8;
+      --brand-hover: #a78bfa;
+      --brand-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --err: #ef4444;
+      --glass: rgba(15, 23, 42, 0.85);
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+      --shadow-hover: 0 20px 40px -12px rgba(99, 102, 241, 0.15), 0 1px 0 rgba(255, 255, 255, 0.1) inset;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: 
+        linear-gradient(rgba(99, 102, 241, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.02) 1px, transparent 1px),
+        radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.06), transparent 80%),
+        radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.06), transparent 50%),
+        var(--bg);
+      background-size: 20px 20px, 20px 20px, 100% 100%, 100% 100%, 100% 100%;
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+    h1 {
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--brand-hover) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      font-size: 2.25rem;
+      text-shadow: 0 2px 10px rgba(99, 102, 241, 0.1);
+    }
+    .sub { color: var(--muted); font-size: 0.925rem; margin-bottom: 32px; font-weight: 500; }
+    .card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-hover);
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(2, 6, 23, 0.6);
+      color: var(--text);
+      font-size: 14px;
+      margin-bottom: 16px;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), 0 0 20px rgba(99, 102, 241, 0.15);
+    }
+    input::placeholder { color: rgba(148, 163, 184, 0.4); }
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: var(--brand-gradient);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+      transform: translateY(-1px);
+      filter: brightness(1.1);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--err);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--err);
+      transform: translateY(-1px);
+    }
+    .btn-warn {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warn);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+    .btn-warn:hover {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--warn);
+      transform: translateY(-1px);
+    }
+    .btn-ghost {
+      background: rgba(2, 6, 23, 0.4);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      background: rgba(2, 6, 23, 0.7);
+      border-color: var(--border-hover);
+      transform: translateY(-1px);
+    }
+    .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 8px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab {
+      padding: 10px 20px;
+      border-radius: 99px;
+      background: rgba(2, 6, 23, 0.4);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all var(--transition);
+    }
+    .tab:hover {
+      color: var(--text);
+      border-color: var(--border-hover);
+    }
+    .tab.active {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--brand-hover);
+      border-color: rgba(99, 102, 241, 0.35);
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.1);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 14px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+    th { color: var(--muted); text-transform: uppercase; font-size: 10px; letter-spacing: .08em; font-weight: 700; }
+    tr:hover td { background: rgba(255, 255, 255, 0.01); }
+    .badge {
+      display: inline-flex;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge.active { background: rgba(16, 185, 129, 0.1); color: var(--ok); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .badge.revoked, .badge.suspended, .badge.expired { background: rgba(239, 68, 68, 0.1); color: var(--err); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .key-box {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.35rem;
+      letter-spacing: .05em;
+      text-align: center;
+      padding: 20px;
+      background: rgba(2, 6, 23, 0.8);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+      word-break: break-all;
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    .hidden { display: none !important; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .msg { padding: 12px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 16px; border: 1px solid transparent; font-weight: 600; }
+    .msg.ok { background: rgba(16, 185, 129, 0.1); color: var(--ok); border-color: rgba(16, 185, 129, 0.2); }
+    .msg.err { background: rgba(239, 68, 68, 0.1); color: var(--err); border-color: rgba(239, 68, 68, 0.2); }
+    a { color: var(--brand); text-decoration: none; font-weight: 600; transition: color var(--transition); }
+    a:hover { color: var(--brand-hover); text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Powerkits License Admin</h1>
+    <p class="sub">Generate licenses, manage users, revoke access — changes apply to extensions in real time (within ~30s).</p>
+
+    <div id="login-card" class="card">
+      <label>Admin Secret</label>
+      <input type="password" id="admin-secret" placeholder="Paste ADMIN_SECRET from Vercel env">
+      <button class="btn-primary" onclick="login()">Unlock Admin Panel</button>
+      <p class="sub" style="margin-top:12px;margin-bottom:0">Stored in this browser session only. <a href="/">← API home</a></p>
+    </div>
+
+    <div id="panel" class="hidden">
+      <div class="tabs">
+        <div class="tab active" data-tab="generate" onclick="switchTab('generate')">Generate License</div>
+        <div class="tab" data-tab="licenses" onclick="switchTab('licenses')">All Licenses</div>
+        <div class="tab" data-tab="devices" onclick="switchTab('devices')">Active Devices</div>
+      </div>
+      <div id="flash"></div>
+
+      <div id="tab-generate" class="card">
+        <h2 style="margin:0 0 16px;font-size:1rem;">Create New License</h2>
+        <div class="row">
+          <div><label>Customer Name</label><input id="c-name" placeholder="John Doe"></div>
+          <div><label>Customer Email</label><input id="c-email" type="email" placeholder="john@example.com"></div>
+          <div><label>Plan</label><input id="c-plan" value="pro"></div>
+          <div><label>Max Devices</label><input id="c-devices" type="number" value="2" min="1"></div>
+          <div><label>Expires (optional)</label><input id="c-expires" type="date"></div>
+        </div>
+        <button class="btn-primary" onclick="createLicense()">Generate License Key</button>
+        <div id="new-key" class="hidden">
+          <p style="color:var(--warn);font-size:13px;">Copy now — shown once only:</p>
+          <div class="key-box" id="new-key-text"></div>
+          <button class="btn-ghost" onclick="copyKey()">Copy Key</button>
+        </div>
+      </div>
+
+      <div id="tab-licenses" class="card hidden">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <input id="lic-search" placeholder="Search name, email, plan..." oninput="debounceLoadLicenses()">
+          <button class="btn-ghost" onclick="loadLicenses()">Refresh</button>
+        </div>
+        <div style="overflow-x:auto"><table><thead><tr>
+          <th>Customer / Plan</th><th>Status</th><th>Devices</th><th>Expires</th><th>Actions</th>
+        </tr></thead><tbody id="lic-table"></tbody></table></div>
+      </div>
+
+      <div id="tab-devices" class="card hidden">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <input id="dev-search" placeholder="Search device id or IP..." oninput="debounceLoadDevices()">
+          <button class="btn-ghost" onclick="loadDevices()">Refresh</button>
+        </div>
+        <div style="overflow-x:auto"><table><thead><tr>
+          <th>Device</th><th>License</th><th>Last Seen</th><th>Actions</th>
+        </tr></thead><tbody id="dev-table"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = location.origin;
+    let adminSecret = sessionStorage.getItem('pk_admin_secret') || '';
+    let lastKey = '';
+    let licTimer, devTimer;
+
+    if (adminSecret) { document.getElementById('admin-secret').value = adminSecret; login(true); }
+
+    function headers() {
+      return { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret };
+    }
+
+    function flash(msg, ok) {
+      const el = document.getElementById('flash');
+      el.innerHTML = '<div class="msg ' + (ok ? 'ok' : 'err') + '">' + msg + '</div>';
+      setTimeout(() => { el.innerHTML = ''; }, 5000);
+    }
+
+    function login(silent) {
+      adminSecret = document.getElementById('admin-secret').value.trim();
+      if (!adminSecret) return flash('Enter admin secret.', false);
+      fetch(API + '/api/admin/licenses', { headers: headers() })
+        .then(r => r.json())
+        .then(d => {
+          if (!d.success) throw new Error(d.error || 'Unauthorized');
+          sessionStorage.setItem('pk_admin_secret', adminSecret);
+          document.getElementById('login-card').classList.add('hidden');
+          document.getElementById('panel').classList.remove('hidden');
+          loadLicenses();
+          if (!silent) flash('Admin panel unlocked.', true);
+        })
+        .catch(e => flash(e.message || 'Login failed', false));
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+      ['generate','licenses','devices'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
+      });
+      if (name === 'licenses') loadLicenses();
+      if (name === 'devices') loadDevices();
+    }
+
+    async function createLicense() {
+      const body = {
+        customer_name: document.getElementById('c-name').value.trim(),
+        customer_email: document.getElementById('c-email').value.trim(),
+        plan: document.getElementById('c-plan').value.trim() || 'pro',
+        max_devices: parseInt(document.getElementById('c-devices').value, 10) || 1,
+        expires_at: document.getElementById('c-expires').value ? new Date(document.getElementById('c-expires').value).toISOString() : null
+      };
+      const r = await fetch(API + '/api/admin/licenses', { method: 'POST', headers: headers(), body: JSON.stringify(body) });
+      const d = await r.json();
+      if (!d.success) return flash(d.error || d.message || 'Failed', false);
+      lastKey = d.license_key || d.rawKey;
+      document.getElementById('new-key-text').textContent = lastKey;
+      document.getElementById('new-key').classList.remove('hidden');
+      flash('License created for ' + (body.customer_name || 'user') + '.', true);
+      loadLicenses();
+    }
+
+    function copyKey() {
+      navigator.clipboard.writeText(lastKey);
+      flash('Copied to clipboard.', true);
+    }
+
+    function parseCustomer(lic) {
+      if (lic.customer_name) return lic.customer_name;
+      if (lic.notes && lic.notes.includes('|')) return lic.notes.split('|')[0].trim();
+      return lic.notes || '—';
+    }
+
+    async function loadLicenses() {
+      const q = document.getElementById('lic-search')?.value || '';
+      const r = await fetch(API + '/api/admin/licenses?query=' + encodeURIComponent(q), { headers: headers() });
+      const d = await r.json();
+      if (!d.success) return;
+      const tb = document.getElementById('lic-table');
+      tb.innerHTML = (d.licenses || []).map(lic => `
+        <tr>
+          <td><strong>${esc(parseCustomer(lic))}</strong><br><span style="color:var(--muted)">${esc(lic.plan_name || lic.plan || 'pro')}</span><br><code style="font-size:10px;color:var(--muted)">${lic.id.slice(0,8)}…</code></td>
+          <td><span class="badge ${lic.status}">${lic.status}</span></td>
+          <td>${lic.activation_count}/${lic.max_devices}</td>
+          <td>${lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : 'Never'}</td>
+          <td class="actions">
+            <button class="btn-ghost" onclick="editLicense('${lic.id}')">Edit</button>
+            <button class="btn-warn" onclick="resetDevices('${lic.id}')">Reset Devices</button>
+            <button class="btn-danger" onclick="removeAccess('${lic.id}')">Remove User</button>
+            <button class="btn-danger" onclick="deleteLicense('${lic.id}')">Delete</button>
+          </td>
+        </tr>`).join('');
+    }
+
+    async function loadDevices() {
+      const q = document.getElementById('dev-search')?.value || '';
+      const r = await fetch(API + '/api/admin/devices?query=' + encodeURIComponent(q), { headers: headers() });
+      const d = await r.json();
+      if (!d.success) return;
+      const tb = document.getElementById('dev-table');
+      tb.innerHTML = (d.devices || []).map(dev => {
+        const did = dev.device_id || dev.device_hash || '—';
+        const lic = dev.licenses || {};
+        const seen = dev.last_seen_at || dev.last_seen;
+        return `<tr>
+          <td><code style="font-size:11px">${esc(did.slice(0,20))}…</code><br>${esc(dev.device_name || dev.ip_address || '')}</td>
+          <td>${esc(lic.customer_name || lic.plan_name || lic.plan || '—')}</td>
+          <td>${seen ? new Date(seen).toLocaleString() : '—'}</td>
+          <td><button class="btn-danger" onclick="removeDevice('${dev.id}','${dev.license_id}','${did}')">Remove</button></td>
+        </tr>`;
+      }).join('') || '<tr><td colspan="4" style="color:var(--muted)">No active devices</td></tr>';
+    }
+
+    async function editLicense(id) {
+      const name = prompt('Customer name:');
+      if (name === null) return;
+      const plan = prompt('Plan:', 'pro');
+      if (plan === null) return;
+      const max = prompt('Max devices:', '2');
+      const r = await fetch(API + '/api/admin/licenses', {
+        method: 'PATCH', headers: headers(),
+        body: JSON.stringify({ id, customer_name: name, plan, plan_name: plan, max_devices: parseInt(max,10)||1 })
+      });
+      const d = await r.json();
+      flash(d.success ? 'License updated — extension will sync.' : (d.message||'Failed'), d.success);
+      loadLicenses();
+    }
+
+    async function removeAccess(id) {
+      if (!confirm('Remove this user\'s access? Their extension will logout within ~30 seconds.')) return;
+      const r = await fetch(API + '/api/admin/licenses', { method: 'POST', headers: headers(), body: JSON.stringify({ action: 'remove_access', license_id: id }) });
+      const d = await r.json();
+      flash(d.message || (d.success ? 'Access removed.' : 'Failed'), d.success);
+      loadLicenses(); loadDevices();
+    }
+
+    async function resetDevices(id) {
+      if (!confirm('Remove all devices for this license? User must re-activate.')) return;
+      const r = await fetch(API + '/api/admin/licenses', { method: 'POST', headers: headers(), body: JSON.stringify({ action: 'reset_devices', license_id: id }) });
+      const d = await r.json();
+      flash(d.message || 'Done', d.success);
+      loadLicenses(); loadDevices();
+    }
+
+    async function deleteLicense(id) {
+      if (!confirm('Permanently delete this license?')) return;
+      const r = await fetch(API + '/api/admin/licenses?id=' + id, { method: 'DELETE', headers: headers() });
+      const d = await r.json();
+      flash(d.message || 'Deleted', d.success);
+      loadLicenses();
+    }
+
+    async function removeDevice(id, licenseId, deviceId) {
+      if (!confirm('Remove this device? Extension will logout on next check.')) return;
+      const r = await fetch(API + '/api/admin/devices?id=' + encodeURIComponent(id) + '&license_id=' + licenseId + '&device_id=' + encodeURIComponent(deviceId), { method: 'DELETE', headers: headers() });
+      const d = await r.json();
+      flash(d.message || 'Device removed', d.success);
+      loadDevices(); loadLicenses();
+    }
+
+    function debounceLoadLicenses() { clearTimeout(licTimer); licTimer = setTimeout(loadLicenses, 300); }
+    function debounceLoadDevices() { clearTimeout(devTimer); devTimer = setTimeout(loadDevices, 300); }
+    function esc(s) { return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  </script>
+</body>
+</html>

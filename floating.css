@@ -2054,8 +2054,67 @@
 }
 @keyframes ql-master-wave { from { transform: translate3d(-8px,-4px,0) scale(1); } to { transform: translate3d(8px,4px,0) scale(1.02); } }
 .ql-brand, .ql-header-left { display:flex; align-items:center; gap:8px; }
-.ql-brand-logo, .ql-title-logo { width:24px; height:24px; border-radius:50%; object-fit:cover; box-shadow:0 0 18px var(--ql-accent-glow); }
-.ql-title-logo { width:28px; height:28px; }
+
+.ql-brand-logo-svg {
+  width: 26px;
+  height: 26px;
+  display: block;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 8px var(--ql-accent-glow));
+}
+
+/* --- Animated SVG Logo Components --- */
+.logo-ring-outer {
+  transform-origin: center;
+  animation: logo-rotate 10s linear infinite;
+}
+
+.logo-flow-pulse-1 {
+  stroke-dasharray: 30 70;
+  animation: logo-flow-forward 2.5s linear infinite;
+}
+
+.logo-flow-pulse-2 {
+  stroke-dasharray: 30 70;
+  animation: logo-flow-backward 2.5s linear infinite;
+}
+
+.logo-core {
+  transform-origin: center;
+  animation: logo-pulse-breath 3s ease-in-out infinite;
+}
+
+.logo-core-inner {
+  transform-origin: center;
+  animation: logo-pulse-breath-inner 3s ease-in-out infinite;
+}
+
+/* --- SVG Keyframe Animations --- */
+@keyframes logo-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes logo-flow-forward {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes logo-flow-backward {
+  0% { stroke-dashoffset: -100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes logo-pulse-breath {
+  0%, 100% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes logo-pulse-breath-inner {
+  0%, 100% { transform: scale(0.8); opacity: 0.9; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
 .ql-license-gate, .ql-profile-card, .ql-template-card, .ql-input-area, .ql-notif-panel, .ql-history-panel {
   background: linear-gradient(180deg, rgba(15, 21, 36, 0.92), rgba(7, 11, 20, 0.88));
   border-color: var(--ql-border);

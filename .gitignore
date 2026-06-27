@@ -33,3 +33,5 @@ Thumbs.db
 .env.production.local
 *.private.pem
 *.private
+*.pem
+

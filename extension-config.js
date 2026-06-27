@@ -15,7 +15,7 @@ function extensionFooterBadge() {
   return name + " • v" + extensionVersionShort();
 }
 
-var POWERKITS_API_BASE = "https://lovable-powerkits-644.vercel.app";
+var POWERKITS_API_BASE = "https://vercel-api-lac-kappa.vercel.app";
 var POWERKITS_API_KEY = "pk_lov_ext_a8f3c21e9d4b7f0e6a2c5d8b1e4f7a0c";
 
 /** @deprecated Use POWERKITS_* — kept for older script references */
@@ -54,7 +54,7 @@ function gringowApiHeaders(extra) {
 
 function normalizeLicenseUserName(name) {
   var n = String(name || "").trim();
-  if (!n || n.toLowerCase() === "test" || n.toLowerCase() === "user" || /gringow|powerkits/i.test(n)) {
+  if (!n) {
     return DEFAULT_LICENSE_USER_NAME;
   }
   return n;
@@ -176,6 +176,12 @@ function pkLicenseStoragePatch(data) {
   }
   if (Object.prototype.hasOwnProperty.call(data, "validity_minutes")) {
     patch.ql_validity_minutes = data.validity_minutes != null ? data.validity_minutes : null;
+  }
+  if (data.admin_message !== undefined) {
+    patch.ql_admin_message = data.admin_message || "";
+  }
+  if (data.support_url !== undefined) {
+    patch.ql_support_url = data.support_url || "";
   }
   return patch;
 }

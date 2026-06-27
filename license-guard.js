@@ -167,10 +167,14 @@
             heartbeat: true
           })
         }).then(function (data) {
-          if (data && data.allowed) {
+          var ok = data && (data.allowed === true || data.valid === true || data.active === true);
+          if (ok) {
             _assertCache = { at: Date.now(), allowed: true };
-            if (typeof pkLicenseStoragePatch === "function" && (data.expires_at || data.validity_minutes != null)) {
-              chrome.storage.local.set(pkLicenseStoragePatch(data));
+            if (typeof pkLicenseStoragePatch === "function") {
+              var patch = pkLicenseStoragePatch(data);
+              if (data.user_name) patch.ql_user_name = data.user_name;
+              if (data.plan) patch.ql_plan = data.plan;
+              chrome.storage.local.set(patch);
             }
             return data;
           }
@@ -180,9 +184,10 @@
           var msg = (data && data.message) || "License not active.";
           var err = new Error(msg);
           err.pkReason = (data && data.reason) || "inactive";
-          return pkRevokeLicenseStorage().then(function () {
-            throw err;
-          });
+          if (data && (data.reason === "revoked" || data.reason === "expired" || data.reason === "inactive" || data.force_logout)) {
+            return pkRevokeLicenseStorage().then(function () { throw err; });
+          }
+          throw err;
         });
       });
     });
@@ -255,4 +260,67 @@
   window.pkShouldLockoutFromValidation = pkShouldLockoutFromValidation;
   window.pkLicenseUploadHeaders = pkLicenseUploadHeaders;
   window.pkLocalLicenseReady = pkLocalLicenseReady;
+
+  var _policyPollTimer = null;
+  var POLICY_POLL_MS = 30000;
+
+  function pkApplyPolicyUpdate(data) {
+    if (!data) return;
+    if (data.user_name) {
+      chrome.storage.local.set({ ql_user_name: data.user_name });
+    }
+    if (data.plan) {
+      chrome.storage.local.set({ ql_plan: data.plan });
+    }
+    if (typeof pkLicenseStoragePatch === "function") {
+      chrome.storage.local.set(pkLicenseStoragePatch(data));
+    }
+    var nameEl = document.getElementById("sp-name");
+    if (nameEl && data.user_name) nameEl.textContent = data.user_name;
+  }
+
+  function pkPollLicensePolicyOnce() {
+    return pkReadLicenseStorage().then(function (stored) {
+      if (!pkLocalLicenseReady(stored)) return;
+      return pkResolveDeviceId().then(function (deviceId) {
+        var base = pkApiBase();
+        var token = encodeURIComponent(stored.ql_session_id || "");
+        var dev = encodeURIComponent(deviceId || "");
+        return pkProxyFetch(base + "/api/license/status?token=" + token + "&device_id=" + dev, {
+          method: "GET",
+          headers: pkLicenseHeaders()
+        }).then(function (data) {
+          if (data && data.valid && !data.force_logout) {
+            pkApplyPolicyUpdate(data);
+            return data;
+          }
+          if (data && (data.force_logout || data.valid === false)) {
+            pkInvalidateAssertCache();
+            var msg = data.message || "Your license was updated by an administrator.";
+            return pkRevokeLicenseStorage().then(function () {
+              if (typeof spHandleLicenseInvalid === "function") {
+                spHandleLicenseInvalid({ reason: data.reason || "revoked", message: msg });
+              }
+              throw new Error(msg);
+            });
+          }
+          return data;
+        }).catch(function () { /* network blip — keep session */ });
+      });
+    });
+  }
+
+  function pkStartLicensePolicyPoll() {
+    if (_policyPollTimer) return;
+    pkPollLicensePolicyOnce();
+    _policyPollTimer = setInterval(function () { pkPollLicensePolicyOnce(); }, POLICY_POLL_MS);
+  }
+
+  function pkStopLicensePolicyPoll() {
+    if (_policyPollTimer) { clearInterval(_policyPollTimer); _policyPollTimer = null; }
+  }
+
+  window.pkStartLicensePolicyPoll = pkStartLicensePolicyPoll;
+  window.pkStopLicensePolicyPoll = pkStopLicensePolicyPoll;
+  window.pkPollLicensePolicyOnce = pkPollLicensePolicyOnce;
 })();

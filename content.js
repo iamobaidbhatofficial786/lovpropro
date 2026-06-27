@@ -1557,6 +1557,7 @@ function startHeartbeat(licenseKey){
       qlHbConflictCount = 0;
 
       if (data.user_name) qlUserName = normalizeLicenseUserName(data.user_name);
+      if (data.session_id || data.token) qlSessionId = data.session_id || data.token;
       qlApplyLicenseApiData(data);
       qlOnlineCount = data.online_count || 0;
       chrome.storage.local.set(Object.assign({ ql_user_name: qlUserName }, typeof pkLicenseStoragePatch === "function" ? pkLicenseStoragePatch(data) : {}));

@@ -74,7 +74,7 @@ body { animation: sp-fade-in 0.4s ease-out; }
 @keyframes sp-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
 .sp-textarea { width: 100%; padding: 12px 14px; border-radius: var(--ql-radius-sm); border: 1px solid var(--ql-border); background: var(--ql-bg-surface); color: var(--ql-text-primary); font-size: 13px; font-family: inherit; outline: none; resize: vertical; min-height: 64px; margin-bottom: 6px; line-height: 1.5; transition: all var(--ql-transition); }
-.sp-textarea:focus { border-color: var(--ql-accent); box-shadow: 0 0 0 3px var(--ql-accent-subtle); }
+.sp-textarea:focus { border-color: var(--ql-accent); box-shadow: 0 0 0 3px var(--ql-accent-subtle), 0 0 16px var(--ql-accent-glow); }
 .sp-textarea::placeholder { color: var(--ql-text-muted); }
 
 .sp-attach-preview { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; max-height: 100px; overflow-y: auto; }
@@ -111,7 +111,7 @@ body { animation: sp-fade-in 0.4s ease-out; }
 
 .sp-shortcuts-title { display: block; text-align: center; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ql-text-muted); margin-bottom: 10px; margin-top: 4px; }
 .sp-shortcuts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-.sp-chip { padding: 7px 4px; border-radius: var(--ql-radius-xs); border: 1px solid var(--ql-border); background: var(--ql-bg-surface); color: var(--ql-text-secondary); font-size: 10px; font-weight: 500; cursor: pointer; transition: all var(--ql-transition); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.sp-chip { padding: 7px 12px; border-radius: var(--ql-radius-sm); border: 1px solid var(--ql-border); background: var(--ql-bg-surface); color: var(--ql-text-secondary); font-size: 10px; font-weight: 600; cursor: pointer; transition: all var(--ql-transition); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; justify-content: center; gap: 4px; }
 .sp-chip:hover { background: var(--ql-accent-subtle); border-color: var(--ql-border-hover); color: var(--ql-accent-hover); transform: translateY(-1px); }
 .sp-chip svg { flex-shrink: 0; width: 12px; height: 12px; }
 
@@ -304,4 +304,85 @@ body { animation: sp-fade-in 0.4s ease-out; }
   border: 1px solid var(--ql-border-hover);
 }
 
-.sp-brand-logo { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 18px var(--ql-accent-glow); }
+.sp-brand-logo-svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 8px var(--ql-accent-glow));
+}
+
+/* --- Animated SVG Logo Components --- */
+.logo-ring-outer {
+  transform-origin: center;
+  animation: logo-rotate 10s linear infinite;
+}
+
+.logo-flow-pulse-1 {
+  stroke-dasharray: 30 70;
+  animation: logo-flow-forward 2.5s linear infinite;
+}
+
+.logo-flow-pulse-2 {
+  stroke-dasharray: 30 70;
+  animation: logo-flow-backward 2.5s linear infinite;
+}
+
+.logo-core {
+  transform-origin: center;
+  animation: logo-pulse-breath 3s ease-in-out infinite;
+}
+
+.logo-core-inner {
+  transform-origin: center;
+  animation: logo-pulse-breath-inner 3s ease-in-out infinite;
+}
+
+/* Realtime Broadcast Announcement Banner */
+.sp-admin-banner {
+  padding: 10px 12px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: var(--ql-radius-sm);
+  color: #f59e0b;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  animation: sp-fade-in 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sp-admin-banner::before {
+  content: '📢';
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+/* --- SVG Keyframe Animations --- */
+@keyframes logo-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes logo-flow-forward {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes logo-flow-backward {
+  0% { stroke-dashoffset: -100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes logo-pulse-breath {
+  0%, 100% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes logo-pulse-breath-inner {
+  0%, 100% { transform: scale(0.8); opacity: 0.9; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+

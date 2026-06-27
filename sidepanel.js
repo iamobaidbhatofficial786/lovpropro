@@ -282,6 +282,9 @@
   function bgFetch(url, opts = {}) {
     const requireSuccess = opts.requireSuccess === true;
     const vendorFeatureCompat = opts.vendorFeatureCompat === true || opts.featureUiCompat === true;
+    function isLicenseEnforcementUrl(u) {
+      return /validate-license|assert-session|\/api\/license\/(validate|status|activate|deactivate)/i.test(String(u || ""));
+    }
     return new Promise(async (resolve, reject) => {
       try {
         if (!chrome.runtime || !chrome.runtime.id) return reject(new Error("Extension context invalidated"));
@@ -338,7 +341,7 @@
               || ("Request failed (HTTP " + resp.status + ")");
             
             if (resp.status === 401 || resp.status === 403) {
-              if (typeof spHandleLicenseInvalid === "function") {
+              if (isLicenseEnforcementUrl(url) && typeof spHandleLicenseInvalid === "function") {
                 spHandleLicenseInvalid({ reason: "revoked", message: errText });
               }
             }
@@ -702,14 +705,15 @@
           ql_license_key: key,
           ql_session_id: sessionId,
           ql_user_name: userName,
-          ql_plan: data.plan || null
+          ql_plan: data.plan || null,
+          ql_activated_at: new Date().toISOString()
         }, typeof pkLicenseStoragePatch === "function" ? pkLicenseStoragePatch(data) : {
           ql_expires_at: data.expires_at || null,
           ql_activated_at: data.activated_at || new Date().toISOString(),
           ql_license_status: data.status || null
         }), () => {
           if (typeof pkInvalidateAssertCache === "function") pkInvalidateAssertCache();
-          syncCreditBypassOnLovableTabs(true);
+          setTimeout(function() { syncCreditBypassOnLovableTabs(true); }, 2500);
           log.className = 'sp-log sp-log-success'; log.textContent = '✓ ' + spUserText(data.message || 'License activated successfully');
           setTimeout(() => { showMainUI(); startHeartbeat(key); }, 800);
         });
@@ -789,6 +793,29 @@
     }
   }
 
+  function spApplyAdminConfig() {
+    chrome.storage.local.get(["ql_admin_message", "ql_support_url"], function(res) {
+      const banner = document.getElementById('sp-admin-banner');
+      if (banner) {
+        if (res.ql_admin_message) {
+          banner.textContent = res.ql_admin_message;
+          banner.style.display = 'flex';
+        } else {
+          banner.style.display = 'none';
+        }
+      }
+
+      const supportLink = document.getElementById('sp-support-telegram');
+      if (supportLink) {
+        if (res.ql_support_url) {
+          supportLink.href = res.ql_support_url;
+        } else {
+          supportLink.href = (typeof DISCORD_SUPPORT_URL !== "undefined" && DISCORD_SUPPORT_URL) || "https://t.me/Iamsamkhanofficial";
+        }
+      }
+    });
+  }
+
   // --- Main UI ---
   function showMainUI() {
     const greeting = spEscapeHtml(normalizeLicenseUserName(userName));
@@ -801,6 +828,7 @@
           '<div class="sp-sync-status" id="sp-sync">⏳ Waiting for sync...</div>' +
           '<div class="sp-trial-countdown" id="sp-countdown" style="display:none"></div>' +
         '</div>' +
+        '<div id="sp-admin-banner" class="sp-admin-banner" style="display:none"></div>' +
         '<div id="sp-reseller-btn" style="display:none;margin-bottom:14px">' +
           '<a href="' + ((typeof DISCORD_SUPPORT_URL !== "undefined" && DISCORD_SUPPORT_URL) || "https://discord.gg/9ZBezyTEu5") + '" target="_blank" rel="noopener noreferrer" class="pk-discord-cta">' +
             '🔑 Request your key via Discord<span style="margin-left:auto;font-size:10px;opacity:0.6">→</span>' +
@@ -823,47 +851,7 @@
 
       // Sync status
       updateSync();
-      chrome.storage.onChanged.addListener((ch) => {
-        if(ch.lovable_projectId || ch.lovable_token) updateSync();
-        if(ch.ql_license_valid) {
-          if (ch.ql_license_valid.newValue) {
-            chrome.storage.local.get([
-              "ql_user_name",
-              "ql_expires_at",
-              "ql_activated_at",
-              "ql_license_status",
-              "ql_validity_minutes",
-              "ql_session_id",
-              "ql_license_key"
-            ], (res) => {
-              userName = normalizeLicenseUserName(res.ql_user_name);
-              expiresAt = res.ql_expires_at || null;
-              spActivatedAt = res.ql_activated_at || null;
-              licenseStatus = res.ql_license_status || null;
-              validityMinutes = res.ql_validity_minutes != null ? res.ql_validity_minutes : null;
-              sessionId = res.ql_session_id || null;
-              
-              syncCreditBypassOnLovableTabs(true);
-              showMainUI();
-              if (res.ql_license_key) startHeartbeat(res.ql_license_key);
-            });
-          } else {
-            userName = "";
-            expiresAt = null;
-            spActivatedAt = null;
-            licenseStatus = null;
-            validityMinutes = null;
-            sessionId = null;
-            
-            syncCreditBypassOnLovableTabs(false);
-            if (heartbeatInterval) {
-              clearInterval(heartbeatInterval);
-              heartbeatInterval = null;
-            }
-            showLicenseGate();
-          }
-        }
-      });
+      spRegisterStorageListener();
 
       // Countdown
       updateCountdown();
@@ -876,6 +864,48 @@
       checkUnread();
       checkForUpdate();
       checkResellerRole();
+      spApplyAdminConfig();
+    });
+  }
+
+  let spStorageListenerRegistered = false;
+
+  function spRegisterStorageListener() {
+    if (spStorageListenerRegistered) return;
+    spStorageListenerRegistered = true;
+    chrome.storage.onChanged.addListener((ch) => {
+      if(ch.lovable_projectId || ch.lovable_token) updateSync();
+      if(ch.ql_admin_message || ch.ql_support_url) spApplyAdminConfig();
+      if(ch.ql_license_valid) {
+        if (ch.ql_license_valid.newValue) {
+          chrome.storage.local.get([
+            "ql_user_name", "ql_expires_at", "ql_activated_at", "ql_license_status",
+            "ql_validity_minutes", "ql_session_id", "ql_license_key", "ql_plan"
+          ], (res) => {
+            userName = normalizeLicenseUserName(res.ql_user_name);
+            expiresAt = res.ql_expires_at || null;
+            spActivatedAt = res.ql_activated_at || null;
+            licenseStatus = res.ql_license_status || null;
+            validityMinutes = res.ql_validity_minutes != null ? res.ql_validity_minutes : null;
+            sessionId = res.ql_session_id || null;
+            var nameEl = document.getElementById('sp-name');
+            if (nameEl) nameEl.textContent = userName;
+            updateCountdown();
+            if (res.ql_license_key && !heartbeatInterval) startHeartbeat(res.ql_license_key);
+          });
+        } else {
+          userName = "";
+          expiresAt = null;
+          spActivatedAt = null;
+          licenseStatus = null;
+          validityMinutes = null;
+          sessionId = null;
+          syncCreditBypassOnLovableTabs(false);
+          if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null; }
+          if (typeof pkStopLicensePolicyPoll === "function") pkStopLicensePolicyPoll();
+          showLicenseGate();
+        }
+      }
     });
   }
 
@@ -1623,9 +1653,17 @@
   // --- Heartbeat ---
   let spHbConflictCount = 0;
 
+  function spRecentlyActivated() {
+    if (!spActivatedAt) return false;
+    var ms = typeof pkParseUtcExpiry === "function" ? pkParseUtcExpiry(spActivatedAt) : Date.parse(spActivatedAt);
+    if (!ms || isNaN(ms)) return false;
+    return (Date.now() - ms) < 90000;
+  }
+
   function startHeartbeat(key) {
     if (INTERNAL_LICENSE_MODE) return;
     if(heartbeatInterval) clearInterval(heartbeatInterval);
+    if (typeof pkStartLicensePolicyPoll === "function") pkStartLicensePolicyPoll();
     spHbConflictCount = 0;
     heartbeatInterval = setInterval(async () => {
       try {
@@ -1650,6 +1688,7 @@
         }
         spHbConflictCount = 0;
         if(data.user_name) { userName = normalizeLicenseUserName(data.user_name); const el = document.getElementById('sp-name'); if(el) el.textContent = userName; }
+        if(data.session_id || data.token) { sessionId = data.session_id || data.token; }
         spApplyLicenseApiData(data);
         chrome.storage.local.set(typeof pkLicenseStoragePatch === "function" ? pkLicenseStoragePatch(data) : { ql_expires_at: expiresAt });
         updateCountdown();
@@ -1888,6 +1927,7 @@
   // --- Initialize ---
   (async function init() {
     deviceId = await getDeviceId();
+    spApplyAdminConfig();
     chrome.storage.local.get(["ql_dark_mode"], r => { if(r.ql_dark_mode === false) document.body.classList.add('sp-light'); });
     chrome.storage.local.get(["ql_license_valid","ql_license_key","ql_user_name","ql_expires_at","ql_activated_at","ql_license_status","ql_validity_minutes","ql_session_id"], async (res) => {
       if(INTERNAL_LICENSE_MODE || res.ql_license_valid) {
@@ -1922,6 +1962,9 @@
                 updateCountdown();
                 syncCreditBypassOnLovableTabs(true);
               } else {
+                if (spRecentlyActivated() && (data.reason === "invalid_session" || data.reason === "inactive")) {
+                  return;
+                }
                 if (data.reason === "device_conflict" && attempt < 2) {
                   setTimeout(() => _doSpStartupHb(attempt + 1), 5000);
                   return;

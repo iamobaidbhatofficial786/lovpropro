@@ -31,33 +31,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     if (device_hash) {
-      // 1. Remove specific device
-      const { data: dev } = await supabase
-        .from('devices')
-        .select('id')
-        .eq('license_id', license_id)
-        .eq('device_hash', device_hash)
-        .single();
+      // 1. Remove specific device from both new and legacy tables
+      await supabase.from('license_devices').delete().eq('license_id', license_id).eq('device_id', device_hash);
+      await supabase.from('devices').delete().eq('license_id', license_id).eq('device_hash', device_hash);
 
-      if (dev) {
-        await supabase.from('devices').delete().eq('id', dev.id);
+      // Revoke sessions for this device
+      try {
+        await supabase.from('license_sessions').update({ revoked_at: new Date().toISOString() }).eq('license_id', license_id).eq('device_id', device_hash);
+      } catch (e) {}
 
-        const { data: license } = await supabase
-          .from('licenses')
-          .select('activation_count')
-          .eq('id', license_id)
-          .single();
+      // Recalculate remaining devices across both tables
+      const { count: countNew } = await supabase.from('license_devices').select('*', { count: 'exact', head: true }).eq('license_id', license_id);
+      const { count: countLegacy } = await supabase.from('devices').select('*', { count: 'exact', head: true }).eq('license_id', license_id);
+      const total = (countNew || 0) + (countLegacy || 0);
 
-        if (license) {
-          const newCount = Math.max(0, license.activation_count - 1);
-          await supabase.from('licenses').update({ activation_count: newCount }).eq('id', license_id);
-        }
-      }
+      // Update the licenses activation count in the database
+      await supabase.from('licenses').update({ activation_count: total, updated_at: new Date().toISOString() }).eq('id', license_id);
+
       return res.status(200).json({ success: true, message: `Device ${device_hash} removed.` });
     } else {
-      // 2. Full reset: remove all devices
+      // 2. Full reset: remove all devices from both tables
+      await supabase.from('license_devices').delete().eq('license_id', license_id);
       await supabase.from('devices').delete().eq('license_id', license_id);
-      await supabase.from('licenses').update({ activation_count: 0 }).eq('id', license_id);
+
+      // Revoke all sessions for this license
+      try {
+        await supabase.from('license_sessions').update({ revoked_at: new Date().toISOString() }).eq('license_id', license_id);
+      } catch (e) {}
+
+      // Reset activation count to 0 in database
+      await supabase.from('licenses').update({ activation_count: 0, updated_at: new Date().toISOString() }).eq('id', license_id);
+
       return res.status(200).json({ success: true, message: 'All devices reset for this license.' });
     }
   } catch (err: any) {

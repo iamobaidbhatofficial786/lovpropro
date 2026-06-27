@@ -46,30 +46,38 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     verifyAuth(request);
-    const { plan_name, max_devices, expires_at, notes } = await request.json();
+    const { plan_name, plan, customer_name, customer_email, max_devices, expires_at, notes, admin_message, support_url } = await request.json();
 
-    if (!plan_name) {
-      return NextResponse.json({ success: false, error: 'plan_name is required.' }, { status: 400 });
+    const planLabel = plan_name || plan || 'pro';
+
+    if (!planLabel) {
+      return NextResponse.json({ success: false, error: 'plan is required.' }, { status: 400 });
     }
 
-    // 1. Generate secure key
     const rawKey = generateLicenseKey();
     const hash = sha256(rawKey);
 
     const supabase = getSupabaseAdmin();
 
-    // 2. Insert into DB
+    const insertPayload: Record<string, unknown> = {
+      license_key_hash: hash,
+      plan_name: planLabel,
+      max_devices: max_devices || 1,
+      expires_at: expires_at || null,
+      notes: notes || [customer_name, customer_email].filter(Boolean).join(' | ') || '',
+      status: 'active',
+      active: true,
+      admin_message: admin_message || '',
+      support_url: support_url || '',
+    };
+
+    if (customer_name) insertPayload.customer_name = customer_name;
+    if (customer_email) insertPayload.customer_email = customer_email;
+    if (plan) insertPayload.plan = plan;
+
     const { data: license, error } = await supabase
       .from('licenses')
-      .insert({
-        license_key_hash: hash,
-        plan_name,
-        max_devices: max_devices || 1,
-        expires_at: expires_at || null,
-        notes: notes || '',
-        status: 'active',
-        active: true,
-      })
+      .insert(insertPayload)
       .select('*')
       .single();
 
@@ -86,17 +94,22 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   try {
     verifyAuth(request);
-    const { id, plan_name, max_devices, expires_at, notes, status } = await request.json();
+    const { id, plan_name, plan, customer_name, customer_email, max_devices, expires_at, notes, status, admin_message, support_url } = await request.json();
 
     if (!id) {
       return NextResponse.json({ success: false, error: 'License id is required.' }, { status: 400 });
     }
 
-    const updates: any = {};
+    const updates: any = { updated_at: new Date().toISOString() };
     if (plan_name !== undefined) updates.plan_name = plan_name;
+    if (plan !== undefined) { updates.plan = plan; updates.plan_name = plan; }
+    if (customer_name !== undefined) updates.customer_name = customer_name;
+    if (customer_email !== undefined) updates.customer_email = customer_email;
     if (max_devices !== undefined) updates.max_devices = max_devices;
     if (expires_at !== undefined) updates.expires_at = expires_at || null;
     if (notes !== undefined) updates.notes = notes;
+    if (admin_message !== undefined) updates.admin_message = admin_message;
+    if (support_url !== undefined) updates.support_url = support_url;
     
     if (status !== undefined) {
       updates.status = status;

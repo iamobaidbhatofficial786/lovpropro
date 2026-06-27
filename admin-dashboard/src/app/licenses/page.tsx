@@ -7,12 +7,17 @@ import { Plus, Trash2, ShieldAlert, CheckCircle, Search, Edit2, Ban, ShieldCheck
 interface License {
   id: string;
   plan_name: string;
+  plan?: string;
+  customer_name?: string;
+  customer_email?: string;
   status: string;
   max_devices: number;
   activation_count: number;
   notes: string;
   created_at: string;
   expires_at: string | null;
+  admin_message?: string;
+  support_url?: string;
 }
 
 export default function LicensesPage() {
@@ -26,12 +31,18 @@ export default function LicensesPage() {
   const [keyModalOpen, setKeyModalOpen] = useState(false);
   
   // Form State
-  const [planName, setPlanName] = useState('1 Device License');
+  const [planName, setPlanName] = useState('pro');
+  const [customerName, setCustomerName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
   const [maxDevices, setMaxDevices] = useState(1);
   const [expiresAt, setExpiresAt] = useState('');
   const [notes, setNotes] = useState('');
+  const [status, setStatus] = useState('active');
+  const [customDays, setCustomDays] = useState('');
   const [generatedKey, setGeneratedKey] = useState('');
   const [selectedLicense, setSelectedLicense] = useState<License | null>(null);
+  const [adminMessage, setAdminMessage] = useState('');
+  const [supportUrl, setSupportUrl] = useState('');
 
   const fetchLicenses = async () => {
     try {
@@ -66,9 +77,14 @@ export default function LicensesPage() {
         },
         body: JSON.stringify({
           plan_name: planName,
+          plan: planName,
+          customer_name: customerName,
+          customer_email: customerEmail,
           max_devices: maxDevices,
           expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
           notes,
+          admin_message: adminMessage,
+          support_url: supportUrl,
         }),
       });
 
@@ -79,10 +95,14 @@ export default function LicensesPage() {
         setKeyModalOpen(true);
         fetchLicenses();
         // Reset form
-        setPlanName('1 Device License');
+        setPlanName('pro');
+        setCustomerName('');
+        setCustomerEmail('');
         setMaxDevices(1);
         setExpiresAt('');
         setNotes('');
+        setAdminMessage('');
+        setSupportUrl('');
       }
     } catch (err) {
       console.error(err);
@@ -104,9 +124,15 @@ export default function LicensesPage() {
         body: JSON.stringify({
           id: selectedLicense.id,
           plan_name: planName,
+          plan: planName,
+          customer_name: customerName,
+          customer_email: customerEmail,
           max_devices: maxDevices,
           expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
           notes,
+          status,
+          admin_message: adminMessage,
+          support_url: supportUrl,
         }),
       });
 
@@ -136,6 +162,36 @@ export default function LicensesPage() {
     }
   };
 
+  const handleRemoveAccess = async (id: string) => {
+    if (!confirm('Remove this user\'s license access? Their extension will logout within ~30 seconds.')) return;
+    try {
+      const token = localStorage.getItem('admin_token');
+      await fetch('/api/admin/licenses/revoke', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id, action: 'remove_access' }),
+      });
+      fetchLicenses();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleResetDevices = async (id: string) => {
+    if (!confirm('Remove all devices for this license? User must re-activate.')) return;
+    try {
+      const token = localStorage.getItem('admin_token');
+      await fetch('/api/admin/licenses/revoke', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id, action: 'reset_devices' }),
+      });
+      fetchLicenses();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this license? All associated devices will be unlinked.')) return;
     try {
@@ -150,12 +206,48 @@ export default function LicensesPage() {
     }
   };
 
+  const handleCustomDaysChange = (daysStr: string) => {
+    setCustomDays(daysStr);
+    if (!daysStr) {
+      setExpiresAt('');
+      return;
+    }
+    const days = parseInt(daysStr, 10);
+    if (!isNaN(days) && days > 0) {
+      const date = new Date();
+      date.setDate(date.getDate() + days);
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      setExpiresAt(`${yyyy}-${mm}-${dd}`);
+    }
+  };
+
+  const openCreateModal = () => {
+    setPlanName('pro');
+    setCustomerName('');
+    setCustomerEmail('');
+    setMaxDevices(1);
+    setExpiresAt('');
+    setCustomDays('');
+    setNotes('');
+    setAdminMessage('');
+    setSupportUrl('');
+    setCreateModalOpen(true);
+  };
+
   const openEditModal = (license: License) => {
     setSelectedLicense(license);
-    setPlanName(license.plan_name);
+    setPlanName(license.plan_name || license.plan || 'pro');
+    setCustomerName(license.customer_name || '');
+    setCustomerEmail(license.customer_email || '');
     setMaxDevices(license.max_devices);
     setExpiresAt(license.expires_at ? license.expires_at.split('T')[0] : '');
     setNotes(license.notes);
+    setStatus(license.status || 'active');
+    setAdminMessage(license.admin_message || '');
+    setSupportUrl(license.support_url || '');
+    setCustomDays('');
     setEditModalOpen(true);
   };
 
@@ -168,7 +260,7 @@ export default function LicensesPage() {
             <p className="text-xs text-slate-400 mt-1">Create and manage license keys for your users</p>
           </div>
           <button
-            onClick={() => setCreateModalOpen(true)}
+            onClick={openCreateModal}
             className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-500 text-xs font-bold rounded-xl text-white transition-all shadow-lg shadow-brand-600/25 active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" />
@@ -203,7 +295,7 @@ export default function LicensesPage() {
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider">
-                    <th className="py-4 px-6">ID / Plan</th>
+                    <th className="py-4 px-6">Customer / Plan</th>
                     <th className="py-4 px-6">Status</th>
                     <th className="py-4 px-6">Devices (Used/Max)</th>
                     <th className="py-4 px-6">Expires At</th>
@@ -215,8 +307,10 @@ export default function LicensesPage() {
                   {licenses.map((lic) => (
                     <tr key={lic.id} className="hover:bg-slate-900/30 transition-colors">
                       <td className="py-4 px-6">
-                        <span className="font-bold text-white block">{lic.plan_name}</span>
-                        <span className="text-[10px] text-slate-500 font-mono block mt-0.5">{lic.id}</span>
+                        <span className="font-bold text-white block">{lic.customer_name || lic.notes?.split('|')[0]?.trim() || '—'}</span>
+                        <span className="text-[10px] text-slate-400 block">{lic.plan_name || lic.plan}</span>
+                        {lic.customer_email && <span className="text-[10px] text-slate-500 block">{lic.customer_email}</span>}
+                        <span className="text-[10px] text-slate-600 font-mono block mt-0.5">{lic.id.slice(0, 8)}…</span>
                       </td>
                       <td className="py-4 px-6">
                         <span className={`inline-flex px-2 py-0.5 rounded-full font-semibold text-[10px] uppercase ${
@@ -235,8 +329,18 @@ export default function LicensesPage() {
                       <td className="py-4 px-6 text-slate-400">
                         {lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : 'Never'}
                       </td>
-                      <td className="py-4 px-6 text-slate-400 max-w-xs truncate" title={lic.notes}>
-                        {lic.notes || '—'}
+                      <td className="py-4 px-6 text-slate-400 max-w-xs" title={lic.notes}>
+                        <div className="truncate">{lic.notes || '—'}</div>
+                        {lic.admin_message && (
+                          <div className="text-[10px] text-amber-400 font-semibold mt-1 truncate" title={lic.admin_message}>
+                            📢 {lic.admin_message}
+                          </div>
+                        )}
+                        {lic.support_url && (
+                          <div className="text-[10px] text-indigo-450 font-semibold truncate" title={lic.support_url}>
+                            💬 {lic.support_url}
+                          </div>
+                        )}
                       </td>
                       <td className="py-4 px-6 text-right space-x-2">
                         {lic.status === 'active' ? (
@@ -257,8 +361,15 @@ export default function LicensesPage() {
                           </button>
                         )}
                         <button
-                          onClick={() => handleStatusUpdate(lic.id, 'revoked')}
-                          title="Revoke Key"
+                          onClick={() => handleResetDevices(lic.id)}
+                          title="Reset All Devices"
+                          className="p-1.5 bg-slate-950 border border-slate-800 rounded-lg text-amber-400 hover:bg-amber-400/10 transition-colors inline-block"
+                        >
+                          <Ban className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleRemoveAccess(lic.id)}
+                          title="Remove User Access"
                           className="p-1.5 bg-slate-950 border border-slate-800 rounded-lg text-rose-500 hover:bg-rose-500/10 transition-colors inline-block"
                         >
                           <ShieldAlert className="w-3.5 h-3.5" />
@@ -288,8 +399,8 @@ export default function LicensesPage() {
 
         {/* Modal: Create License */}
         {createModalOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-filter backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div className="fixed inset-0 bg-black/60 backdrop-filter backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 my-8 max-h-[85vh] overflow-y-auto custom-scrollbar">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-bold text-white text-base">Generate New License Key</h3>
                 <button onClick={() => setCreateModalOpen(false)} className="text-slate-500 hover:text-slate-350">
@@ -298,7 +409,15 @@ export default function LicensesPage() {
               </div>
               <form onSubmit={handleCreate} className="space-y-4 text-sm">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Plan Name</label>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Customer Name</label>
+                  <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="John Doe" className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Customer Email</label>
+                  <input type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} placeholder="john@example.com" className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Plan</label>
                   <input
                     type="text"
                     value={planName}
@@ -319,12 +438,43 @@ export default function LicensesPage() {
                   />
                 </div>
                 <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Custom Days (Optional)</label>
+                  <input
+                    type="number"
+                    value={customDays}
+                    onChange={(e) => handleCustomDaysChange(e.target.value)}
+                    placeholder="Enter validity days (e.g. 30)"
+                    min={1}
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
+                  />
+                </div>
+                <div>
                   <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Expiration Date (Optional)</label>
                   <input
                     type="date"
                     value={expiresAt}
                     onChange={(e) => setExpiresAt(e.target.value)}
                     className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Broadcast Message (Realtime)</label>
+                  <input
+                    type="text"
+                    value={adminMessage}
+                    onChange={(e) => setAdminMessage(e.target.value)}
+                    placeholder="E.g., System updates, warning banner..."
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Custom Support URL (Realtime)</label>
+                  <input
+                    type="url"
+                    value={supportUrl}
+                    onChange={(e) => setSupportUrl(e.target.value)}
+                    placeholder="E.g., https://t.me/your_support"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
                   />
                 </div>
                 <div>
@@ -350,8 +500,8 @@ export default function LicensesPage() {
 
         {/* Modal: Edit License */}
         {editModalOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-filter backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <div className="fixed inset-0 bg-black/60 backdrop-filter backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 my-8 max-h-[85vh] overflow-y-auto custom-scrollbar">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-bold text-white text-base">Edit License Details</h3>
                 <button onClick={() => setEditModalOpen(false)} className="text-slate-500 hover:text-slate-350">
@@ -360,7 +510,15 @@ export default function LicensesPage() {
               </div>
               <form onSubmit={handleEdit} className="space-y-4 text-sm">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Plan Name</label>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Customer Name</label>
+                  <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Customer Email</label>
+                  <input type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Plan</label>
                   <input
                     type="text"
                     value={planName}
@@ -381,12 +539,56 @@ export default function LicensesPage() {
                   />
                 </div>
                 <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Custom Days (Optional)</label>
+                  <input
+                    type="number"
+                    value={customDays}
+                    onChange={(e) => handleCustomDaysChange(e.target.value)}
+                    placeholder="Enter validity days (e.g. 30)"
+                    min={1}
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
+                  />
+                </div>
+                <div>
                   <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Expiration Date (Optional)</label>
                   <input
                     type="date"
                     value={expiresAt}
                     onChange={(e) => setExpiresAt(e.target.value)}
                     className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Status</label>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
+                  >
+                    <option value="active">Active</option>
+                    <option value="suspended">Suspended / Inactive</option>
+                    <option value="revoked">Revoked</option>
+                    <option value="expired">Expired</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Broadcast Message (Realtime)</label>
+                  <input
+                    type="text"
+                    value={adminMessage}
+                    onChange={(e) => setAdminMessage(e.target.value)}
+                    placeholder="E.g., System updates, warning banner..."
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Custom Support URL (Realtime)</label>
+                  <input
+                    type="url"
+                    value={supportUrl}
+                    onChange={(e) => setSupportUrl(e.target.value)}
+                    placeholder="E.g., https://t.me/your_support"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
                   />
                 </div>
                 <div>
@@ -411,8 +613,8 @@ export default function LicensesPage() {
 
         {/* Modal: Display Generated Key */}
         {keyModalOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-filter backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
+          <div className="fixed inset-0 bg-black/60 backdrop-filter backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl my-8 max-h-[85vh] overflow-y-auto custom-scrollbar">
               <h3 className="font-bold text-white text-base text-center">New License Key Created!</h3>
               <p className="text-xs text-slate-400 text-center mt-2">
                 Copy this key now. It is only displayed once and is encrypted in our database.

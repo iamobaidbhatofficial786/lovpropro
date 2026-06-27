@@ -23,7 +23,8 @@ export function generateLicenseKey(): string {
 }
 
 function getJwtSecret(): string | null {
-  return process.env.JWT_SECRET || null;
+  const secret = process.env.JWT_SECRET;
+  return secret ? secret.trim() : null;
 }
 
 function getPrivateKey(): string | null {

@@ -40,13 +40,20 @@
     tone(880.00, 0.55, 1.20, 0.04);
   }
 
-  function playFile(name){
-    try {
-      var url = chrome.runtime.getURL("sounds/" + name);
-      var a = new Audio(url);
-      a.volume = 0.55;
-      a.play().catch(function(){});
-    } catch(e){}
+  function playSynthError(type) {
+    if (type === "payment") {
+      // Two quick low warning tones
+      tone(220, 0, 0.15, 0.10);
+      tone(220, 0.2, 0.15, 0.10);
+    } else if (type === "ratelimit") {
+      // Three quick descending tones
+      tone(330, 0, 0.1, 0.08);
+      tone(293.66, 0.12, 0.1, 0.08);
+      tone(261.63, 0.24, 0.15, 0.10);
+    } else { // token or general error
+      // A single low warning tone
+      tone(180, 0, 0.35, 0.12);
+    }
   }
 
   // Categorize a free-form error message and play the matching cue.
@@ -56,16 +63,16 @@
     if(m.indexOf("payment required") !== -1 || m.indexOf("pagamento") !== -1 ||
        m.indexOf("crédito") !== -1 || m.indexOf("credito") !== -1 ||
        m.indexOf("insufici") !== -1 || m.indexOf(" 402") !== -1){
-      playFile("error-payment.mp3"); return;
+      playSynthError("payment"); return;
     }
     if(m.indexOf("rate limit") !== -1 || m.indexOf("rate-limit") !== -1 ||
        m.indexOf("muitas tentativas") !== -1 || m.indexOf("too many") !== -1 ||
        m.indexOf(" 429") !== -1){
-      playFile("error-ratelimit.mp3"); return;
+      playSynthError("ratelimit"); return;
     }
     if(m.indexOf("token") !== -1 || m.indexOf("sess") !== -1 ||
        m.indexOf("auth") !== -1 || m.indexOf(" 401") !== -1 || m.indexOf(" 403") !== -1){
-      playFile("error-token.mp3"); return;
+      playSynthError("token"); return;
     }
   }
 
@@ -73,8 +80,8 @@
     activation: playActivationSuccess,
     promptSent: playPromptSent,
     errorFromMessage: playErrorFromMessage,
-    payment: function(){ playFile("error-payment.mp3"); },
-    rateLimit: function(){ playFile("error-ratelimit.mp3"); },
-    token: function(){ playFile("error-token.mp3"); }
+    payment: function(){ playSynthError("payment"); },
+    rateLimit: function(){ playSynthError("ratelimit"); },
+    token: function(){ playSynthError("token"); }
   };
 })(typeof window !== "undefined" ? window : self);

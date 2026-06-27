@@ -15,12 +15,15 @@ export interface LicenseRow {
   expires_at: string | null;
   customer_name: string | null;
   customer_email: string | null;
+  notes?: string | null;
   created_at: string;
   updated_at: string;
   revoked?: boolean;
   suspended?: boolean;
   expired?: boolean;
   active?: boolean;
+  admin_message?: string | null;
+  support_url?: string | null;
 }
 
 export interface ActivateResult {
@@ -35,6 +38,8 @@ export interface ActivateResult {
   message: string;
   reason?: string;
   allowed?: boolean;
+  admin_message?: string | null;
+  support_url?: string | null;
 }
 
 function normalizePlan(license: LicenseRow): string {
@@ -168,32 +173,45 @@ async function createSession(
   token: string,
   expiresAt: Date,
 ): Promise<void> {
-  const tokenHash = sha256(token);
-  await supabase.from('license_sessions').insert({
-    license_id: licenseId,
-    device_id: deviceId,
-    token_hash: tokenHash,
-    expires_at: expiresAt.toISOString(),
-  });
+  try {
+    const tokenHash = sha256(token);
+    await supabase.from('license_sessions').insert({
+      license_id: licenseId,
+      device_id: deviceId,
+      token_hash: tokenHash,
+      expires_at: expiresAt.toISOString(),
+    });
+  } catch {
+    // license_sessions table may not exist yet — session still valid via JWT
+  }
 }
 
 async function revokeSession(token: string): Promise<void> {
-  const tokenHash = sha256(token);
-  await supabase
-    .from('license_sessions')
-    .update({ revoked_at: new Date().toISOString() })
-    .eq('token_hash', tokenHash)
-    .is('revoked_at', null);
+  try {
+    const tokenHash = sha256(token);
+    await supabase
+      .from('license_sessions')
+      .update({ revoked_at: new Date().toISOString() })
+      .eq('token_hash', tokenHash)
+      .is('revoked_at', null);
+  } catch {
+    // optional table
+  }
 }
 
 async function isSessionRevoked(token: string): Promise<boolean> {
-  const tokenHash = sha256(token);
-  const { data } = await supabase
-    .from('license_sessions')
-    .select('revoked_at')
-    .eq('token_hash', tokenHash)
-    .maybeSingle();
-  return !!(data && data.revoked_at);
+  try {
+    const tokenHash = sha256(token);
+    const { data, error } = await supabase
+      .from('license_sessions')
+      .select('revoked_at')
+      .eq('token_hash', tokenHash)
+      .maybeSingle();
+    if (error) return false;
+    return !!(data && data.revoked_at);
+  } catch {
+    return false;
+  }
 }
 
 function buildToken(license: LicenseRow, deviceId: string): string {
@@ -204,6 +222,20 @@ function buildToken(license: LicenseRow, deviceId: string): string {
     device_id: deviceId,
     issued_at: new Date().toISOString(),
   });
+}
+
+function resolveCustomerName(license: LicenseRow): string {
+  if (license.customer_name?.trim()) {
+    return license.customer_name.trim();
+  }
+  if (license.notes?.trim()) {
+    const parts = license.notes.split('|');
+    const firstPart = parts[0]?.trim();
+    if (firstPart && firstPart.length < 50 && !firstPart.includes('@')) {
+      return firstPart;
+    }
+  }
+  return normalizePlan(license);
 }
 
 function activationSuccess(license: LicenseRow, token: string): ActivateResult {
@@ -217,9 +249,34 @@ function activationSuccess(license: LicenseRow, token: string): ActivateResult {
     expires_at: finalExpiry,
     status: normalizeStatus(license) === 'active' ? 'active' : normalizeStatus(license),
     plan,
-    user_name: license.customer_name || plan,
+    user_name: resolveCustomerName(license),
     message: 'License activated successfully!',
+    admin_message: license.admin_message || '',
+    support_url: license.support_url || '',
   };
+}
+
+export async function getActiveDeviceCount(licenseId: string): Promise<number> {
+  const { count: countNew } = await supabase
+    .from('license_devices')
+    .select('*', { count: 'exact', head: true })
+    .eq('license_id', licenseId);
+
+  const { count: countLegacy } = await supabase
+    .from('devices')
+    .select('*', { count: 'exact', head: true })
+    .eq('license_id', licenseId);
+
+  return (countNew || 0) + (countLegacy || 0);
+}
+
+export async function syncActivationCount(licenseId: string): Promise<number> {
+  const count = await getActiveDeviceCount(licenseId);
+  await supabase
+    .from('licenses')
+    .update({ activation_count: count, updated_at: new Date().toISOString() })
+    .eq('id', licenseId);
+  return count;
 }
 
 export async function activateLicense(params: {
@@ -277,15 +334,27 @@ export async function activateLicense(params: {
 
       await updateDeviceLastSeen(deviceRecord, ipAddress);
 
+      let freshToken = sessionId;
+      const expMs = decoded.exp * 1000;
+      if (expMs - Date.now() < 12 * 60 * 60 * 1000) {
+        freshToken = buildToken(license, deviceId);
+        const sessionExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        await createSession(license.id, deviceId, freshToken, sessionExpiry);
+      }
+
       return {
         success: true,
         valid: true,
         allowed: true,
+        token: freshToken,
+        session_id: freshToken,
         expires_at: license.expires_at,
         status: 'active',
         plan: normalizePlan(license),
-        user_name: license.customer_name || normalizePlan(license),
+        user_name: resolveCustomerName(license),
         message: 'License is valid.',
+        admin_message: license.admin_message || '',
+        support_url: license.support_url || '',
       };
     } catch {
       return {
@@ -301,7 +370,10 @@ export async function activateLicense(params: {
   const existing = await findDevice(license.id, deviceId);
 
   if (!existing) {
-    if (license.activation_count >= license.max_devices) {
+    // Enforce real-time counting to prevent race conditions or out-of-sync bypasses
+    const activeCount = await syncActivationCount(license.id);
+
+    if (activeCount >= license.max_devices) {
       await logSecurityEvent(license.id, null, 'device_limit_exceeded', { deviceId, ipAddress }, ipAddress, 'Unknown');
       return {
         success: false,
@@ -315,6 +387,9 @@ export async function activateLicense(params: {
     if (!registered) {
       return { success: false, valid: false, message: 'Network/server error. Please try again.' };
     }
+
+    // Sync count immediately after registration
+    await syncActivationCount(license.id);
   } else {
     if (existing.table === 'devices' && existing.row.status === 'blocked') {
       return { success: false, valid: false, message: 'This device is blocked. Contact support.', reason: 'blocked' };
@@ -411,8 +486,10 @@ export async function validateLicenseSession(params: {
     expires_at: lic.expires_at,
     status: 'active',
     plan,
-    user_name: lic.customer_name || plan,
+    user_name: resolveCustomerName(lic),
     message: 'License is valid.',
+    admin_message: lic.admin_message || '',
+    support_url: lic.support_url || '',
   };
 }
 
@@ -442,16 +519,8 @@ export async function deactivateLicense(params: {
       await supabase.from('devices').delete().eq('id', deviceRecord.row.id);
     }
 
-    const { data: license } = await supabase.from('licenses').select('activation_count').eq('id', decoded.license_id).single();
-    if (license) {
-      await supabase
-        .from('licenses')
-        .update({
-          activation_count: Math.max(0, license.activation_count - 1),
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', decoded.license_id);
-    }
+    // Sync activation count in a self-healing way
+    await syncActivationCount(decoded.license_id);
   }
 
   await revokeSession(token);
@@ -477,24 +546,56 @@ export async function createLicenseAdmin(params: {
   const hash = sha256(rawKey);
   const now = new Date().toISOString();
 
-  const { data, error } = await supabase
-    .from('licenses')
-    .insert({
-      license_key_hash: hash,
-      plan: params.plan || 'pro',
-      plan_name: params.plan || 'pro',
-      customer_name: params.customer_name || null,
-      customer_email: params.customer_email || null,
-      max_devices: params.max_devices ?? 1,
-      expires_at: params.expires_at || null,
-      status: 'active',
-      active: true,
-      activation_count: 0,
-      created_at: now,
-      updated_at: now,
-    })
-    .select('*')
-    .single();
+  const insertPayload: Record<string, unknown> = {
+    license_key_hash: hash,
+    plan_name: params.plan || 'pro',
+    max_devices: params.max_devices ?? 1,
+    expires_at: params.expires_at || null,
+    status: 'active',
+    active: true,
+    activation_count: 0,
+  };
+
+  const notesParts = [params.customer_name, params.customer_email].filter(Boolean);
+  if (notesParts.length) insertPayload.notes = notesParts.join(' | ');
+
+  let { data, error } = await supabase.from('licenses').insert(insertPayload).select('*').single();
+
+  if (error && /customer_|plan'|updated_at/i.test(error.message || '')) {
+    ({ data, error } = await supabase
+      .from('licenses')
+      .insert({
+        license_key_hash: hash,
+        plan_name: params.plan || 'pro',
+        max_devices: params.max_devices ?? 1,
+        expires_at: params.expires_at || null,
+        notes: notesParts.join(' | ') || '',
+        status: 'active',
+        active: true,
+        activation_count: 0,
+      })
+      .select('*')
+      .single());
+  }
+
+  if (error && /plan_name/i.test(error.message || '')) {
+    ({ data, error } = await supabase
+      .from('licenses')
+      .insert({
+        license_key_hash: hash,
+        plan: params.plan || 'pro',
+        customer_name: params.customer_name || null,
+        customer_email: params.customer_email || null,
+        max_devices: params.max_devices ?? 1,
+        expires_at: params.expires_at || null,
+        status: 'active',
+        activation_count: 0,
+        created_at: now,
+        updated_at: now,
+      })
+      .select('*')
+      .single());
+  }
 
   if (error || !data) {
     return { success: false, message: 'Failed to create license: ' + (error?.message || 'unknown') };
@@ -520,8 +621,13 @@ export async function getLicenseStatus(params: {
       active: result.active,
       status: result.status,
       plan: result.plan,
+      user_name: result.user_name,
       expires_at: result.expires_at,
       message: result.message,
+      reason: result.reason,
+      token: result.token,
+      session_id: result.session_id,
+      force_logout: !result.valid || result.reason === 'revoked' || result.reason === 'expired' || result.reason === 'inactive',
     };
   }
 
@@ -545,11 +651,169 @@ export async function getLicenseStatus(params: {
   return { success: false, message: 'Provide token or license_key.' };
 }
 
+export async function listLicensesAdmin(query?: string): Promise<LicenseRow[]> {
+  let dbQuery = supabase.from('licenses').select('*');
+  if (query?.trim()) {
+    const q = query.trim();
+    if (/^LPK-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i.test(q)) {
+      dbQuery = dbQuery.eq('license_key_hash', sha256(q));
+    } else {
+      dbQuery = dbQuery.or(`plan_name.ilike.%${q}%,notes.ilike.%${q}%,customer_name.ilike.%${q}%,customer_email.ilike.%${q}%`);
+    }
+  }
+  const { data, error } = await dbQuery.order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data || []) as LicenseRow[];
+}
+
+export async function updateLicenseAdmin(body: {
+  id: string;
+  plan?: string;
+  plan_name?: string;
+  customer_name?: string;
+  customer_email?: string;
+  max_devices?: number;
+  expires_at?: string | null;
+  notes?: string;
+  status?: string;
+}): Promise<{ success: boolean; license?: LicenseRow; message?: string }> {
+  if (!body.id) return { success: false, message: 'License id required.' };
+
+  const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  const plan = body.plan || body.plan_name;
+  if (plan !== undefined) {
+    updates.plan = plan;
+    updates.plan_name = plan;
+  }
+  if (body.customer_name !== undefined) updates.customer_name = body.customer_name;
+  if (body.customer_email !== undefined) updates.customer_email = body.customer_email;
+  if (body.max_devices !== undefined) updates.max_devices = body.max_devices;
+  if (body.expires_at !== undefined) updates.expires_at = body.expires_at || null;
+  if (body.notes !== undefined) updates.notes = body.notes;
+
+  if (body.status !== undefined) {
+    updates.status = body.status;
+    updates.active = body.status === 'active';
+    updates.suspended = body.status === 'suspended' || body.status === 'inactive';
+    updates.revoked = body.status === 'revoked';
+    updates.expired = body.status === 'expired';
+  }
+
+  const { data, error } = await supabase.from('licenses').update(updates).eq('id', body.id).select('*').single();
+  if (error) return { success: false, message: error.message };
+  return { success: true, license: data as LicenseRow };
+}
+
+export async function deleteLicenseAdmin(id: string): Promise<{ success: boolean; message?: string }> {
+  await supabase.from('license_devices').delete().eq('license_id', id);
+  await supabase.from('devices').delete().eq('license_id', id);
+  try {
+    await supabase.from('license_sessions').delete().eq('license_id', id);
+  } catch { /* optional table */ }
+  const { error } = await supabase.from('licenses').delete().eq('id', id);
+  if (error) return { success: false, message: error.message };
+  return { success: true, message: 'License deleted.' };
+}
+
+export async function resetLicenseDevicesAdmin(licenseId: string): Promise<{ success: boolean; message?: string }> {
+  if (!licenseId) return { success: false, message: 'license_id required.' };
+  await supabase.from('license_devices').delete().eq('license_id', licenseId);
+  await supabase.from('devices').delete().eq('license_id', licenseId);
+  try {
+    await supabase.from('license_sessions').update({ revoked_at: new Date().toISOString() }).eq('license_id', licenseId).is('revoked_at', null);
+  } catch { /* optional */ }
+  await supabase.from('licenses').update({ activation_count: 0, updated_at: new Date().toISOString() }).eq('id', licenseId);
+  return { success: true, message: 'All devices removed. User must re-activate.' };
+}
+
+export async function removeUserAccessAdmin(licenseId: string): Promise<{ success: boolean; message?: string }> {
+  if (!licenseId) return { success: false, message: 'license_id required.' };
+  await resetLicenseDevicesAdmin(licenseId);
+  await supabase.from('licenses').update({
+    status: 'revoked',
+    revoked: true,
+    active: false,
+    suspended: false,
+    updated_at: new Date().toISOString(),
+  }).eq('id', licenseId);
+  return { success: true, message: 'User access removed. Extension will logout on next check.' };
+}
+
+export async function listDevicesAdmin(licenseId?: string, query?: string): Promise<any[]> {
+  const results: any[] = [];
+
+  let ldQuery = supabase.from('license_devices').select('*, licenses(plan_name, customer_name, plan, status)');
+  if (licenseId) ldQuery = ldQuery.eq('license_id', licenseId);
+  const { data: ld } = await ldQuery.order('last_seen_at', { ascending: false });
+  if (ld) {
+    ld.forEach((d) => results.push({ ...d, source: 'license_devices', device_hash: d.device_id }));
+  }
+
+  let devQuery = supabase.from('devices').select('*, licenses(plan_name, customer_name, plan, status)');
+  if (licenseId) devQuery = devQuery.eq('license_id', licenseId);
+  const { data: legacy } = await devQuery.order('last_seen', { ascending: false });
+  if (legacy) {
+    legacy.forEach((d) => {
+      if (!results.some((r) => r.license_id === d.license_id && (r.device_id || r.device_hash) === d.device_hash)) {
+        results.push({ ...d, source: 'devices' });
+      }
+    });
+  }
+
+  if (query?.trim()) {
+    const q = query.toLowerCase();
+    return results.filter((d) =>
+      (d.device_id || d.device_hash || '').toLowerCase().includes(q)
+      || (d.ip_address || '').toLowerCase().includes(q)
+      || (d.device_name || '').toLowerCase().includes(q),
+    );
+  }
+  return results;
+}
+
+export async function removeDeviceAdmin(params: {
+  id?: string;
+  licenseId?: string;
+  deviceId?: string;
+}): Promise<{ success: boolean; message?: string }> {
+  let licenseId = params.licenseId;
+
+  if (params.id) {
+    const { data: ld } = await supabase.from('license_devices').select('license_id, device_id').eq('id', params.id).maybeSingle();
+    if (ld) {
+      licenseId = ld.license_id;
+      await supabase.from('license_devices').delete().eq('id', params.id);
+      await supabase.from('devices').delete().eq('license_id', ld.license_id).eq('device_hash', ld.device_id);
+    } else {
+      const { data: dev } = await supabase.from('devices').select('license_id, device_hash').eq('id', params.id).maybeSingle();
+      if (!dev) return { success: false, message: 'Device not found.' };
+      licenseId = dev.license_id;
+      await supabase.from('devices').delete().eq('id', params.id);
+      await supabase.from('license_devices').delete().eq('license_id', dev.license_id).eq('device_id', dev.device_hash);
+    }
+  } else if (licenseId && params.deviceId) {
+    await supabase.from('license_devices').delete().eq('license_id', licenseId).eq('device_id', params.deviceId);
+    await supabase.from('devices').delete().eq('license_id', licenseId).eq('device_hash', params.deviceId);
+  } else {
+    return { success: false, message: 'Device id or license_id+device_id required.' };
+  }
+
+  if (licenseId) {
+    // Sync activation count in a self-healing way
+    await syncActivationCount(licenseId);
+    try {
+      await supabase.from('license_sessions').update({ revoked_at: new Date().toISOString() }).eq('license_id', licenseId).eq('device_id', params.deviceId || '');
+    } catch { /* optional */ }
+  }
+
+  return { success: true, message: 'Device removed. Extension will logout on next check.' };
+}
+
 export function verifyAdminSecret(req: { headers: Record<string, string | string[] | undefined> }): boolean {
   const header = req.headers['x-admin-secret'] || req.headers['authorization'];
-  const secret = process.env.ADMIN_SECRET;
+  const secret = (process.env.ADMIN_SECRET || '').trim();
   if (!secret) return false;
-  if (typeof header === 'string' && header === secret) return true;
-  if (typeof header === 'string' && header.replace(/^Bearer\s+/i, '') === secret) return true;
+  if (typeof header === 'string' && header.trim() === secret) return true;
+  if (typeof header === 'string' && header.replace(/^Bearer\s+/i, '').trim() === secret) return true;
   return false;
 }
