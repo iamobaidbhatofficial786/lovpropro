@@ -55,39 +55,8 @@ async function build() {
     }
     console.log('📂 Copied extension files to dist/ folder.');
 
-    // 3. Obfuscate JavaScript files in dist
-    const distFiles = await fs.readdir(distDir);
-    const jsFiles = distFiles.filter(f => f.endsWith('.js') && !skipObfuscation.includes(f));
-
-    console.log(`🔒 Obfuscating ${jsFiles.length} JavaScript files...`);
-
-    for (const file of jsFiles) {
-      const filePath = path.join(distDir, file);
-      const code = await fs.readFile(filePath, 'utf8');
-
-      console.log(`   - Obfuscating: ${file}`);
-
-      const obfuscationResult = JavaScriptObfuscator.obfuscate(code, {
-        compact: true,
-        controlFlowFlattening: true,
-        controlFlowFlatteningThreshold: 0.75,
-        deadCodeInjection: true,
-        deadCodeInjectionThreshold: 0.4,
-        identifierNamesGenerator: 'hexadecimal',
-        renameGlobals: false, // Set to false to avoid breaking cross-file global function bindings
-        stringArray: true,
-        stringArrayEncoding: ['base64'],
-        stringArrayThreshold: 0.8,
-        unicodeEscapeSequence: false,
-        selfDefending: true,
-        debugProtection: true,
-        debugProtectionInterval: 4000,
-        disableConsoleOutput: true,
-        splitStrings: true
-      });
-
-      await fs.writeFile(filePath, obfuscationResult.getObfuscatedCode(), 'utf8');
-    }
+    // 3. Obfuscate JavaScript files in dist (Skipped for clean development execution)
+    console.log('🔒 Skipping obfuscation to ensure perfect compatibility in Developer Mode.');
 
     console.log('\n✨ Build completed successfully! Production-ready extension is in the "dist/" directory.');
   } catch (err) {
