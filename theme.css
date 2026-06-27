@@ -10,39 +10,39 @@
   --ql-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --ql-font-mono: 'JetBrains Mono', monospace;
 
-  --ql-bg: #070b13; /* Rich Slate-Navy Dark Background */
-  --ql-bg-elevated: #0f1624;
-  --ql-bg-surface: #172033;
-  --ql-bg-hover: #22304d;
-  --ql-border: rgba(99, 102, 241, 0.16); /* Subtle Indigo border */
-  --ql-border-hover: rgba(139, 92, 246, 0.4); /* Glowing violet border */
-  --ql-text-primary: #f8fafc; /* Slate 50 */
-  --ql-text-secondary: #cbd5e1; /* Slate 300 */
-  --ql-text-muted: #64748b; /* Slate 500 */
-  --ql-accent: #818cf8; /* Light Indigo */
-  --ql-accent-hover: #a78bfa; /* Violet */
-  --ql-accent-glow: rgba(99, 102, 241, 0.25);
-  --ql-accent-subtle: rgba(99, 102, 241, 0.08);
-  --ql-link: #818cf8;
-  --ql-gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%); /* Indigo to Purple to Fuchsia */
-  --ql-gradient-shimmer: linear-gradient(90deg, #6366f1, #8b5cf6, #d946ef, #6366f1);
-  --ql-success: #10b981;
-  --ql-success-bg: rgba(16, 185, 129, 0.1);
-  --ql-warning: #f59e0b;
-  --ql-warning-bg: rgba(245, 158, 11, 0.1);
-  --ql-danger: #ef4444;
-  --ql-danger-bg: rgba(239, 68, 68, 0.1);
-  --ql-radius: 12px;
-  --ql-radius-sm: 8px;
-  --ql-radius-xs: 6px;
-  --ql-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-  --ql-shadow-hover: 0 20px 40px -12px rgba(99, 102, 241, 0.15), 0 1px 0 rgba(255, 255, 255, 0.1) inset;
-  --ql-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth hardware-accelerated transitions */
-  --ql-glass: rgba(15, 22, 36, 0.85);
-  --ql-overlay: rgba(7, 11, 19, 0.85);
-  --ql-modal-bg: #0f1624;
-  --ql-modal-surface: #172033;
-  --ql-chat-bubble-end: #6366f1;
+  --ql-bg: #030308; /* Deep Obsidian Space Black */
+  --ql-bg-elevated: #090a14;
+  --ql-bg-surface: #101222;
+  --ql-bg-hover: #1b1e38;
+  --ql-border: rgba(0, 242, 254, 0.16); /* Cyber Cyan border */
+  --ql-border-hover: rgba(255, 0, 127, 0.45); /* Glowing Hot Magenta border */
+  --ql-text-primary: #ffffff;
+  --ql-text-secondary: #a9b7c6;
+  --ql-text-muted: #53627b;
+  --ql-accent: #00f2fe; /* Electric Cyber Cyan */
+  --ql-accent-hover: #ff007f; /* Hot Neon Magenta */
+  --ql-accent-glow: rgba(0, 242, 254, 0.3);
+  --ql-accent-subtle: rgba(0, 242, 254, 0.08);
+  --ql-link: #00f2fe;
+  --ql-gradient-primary: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #ff007f 100%);
+  --ql-gradient-shimmer: linear-gradient(90deg, #00f2fe, #ff007f, #00f2fe);
+  --ql-success: #00ff87;
+  --ql-success-bg: rgba(0, 255, 135, 0.08);
+  --ql-warning: #ffb700;
+  --ql-warning-bg: rgba(255, 183, 0, 0.08);
+  --ql-danger: #ff2a6d;
+  --ql-danger-bg: rgba(255, 42, 109, 0.08);
+  --ql-radius: 14px;
+  --ql-radius-sm: 10px;
+  --ql-radius-xs: 7px;
+  --ql-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+  --ql-shadow-hover: 0 20px 45px -12px rgba(0, 242, 254, 0.2), 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+  --ql-transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --ql-glass: rgba(9, 10, 20, 0.85);
+  --ql-overlay: rgba(3, 3, 8, 0.9);
+  --ql-modal-bg: #090a14;
+  --ql-modal-surface: #101222;
+  --ql-chat-bubble-end: #00f2fe;
 }
 
 body.sp-light,
@@ -80,12 +80,12 @@ body.sp-light,
 /* Modern digital developer workspace grid and subtle radial glow */
 body:not(.sp-light) {
   background:
-    linear-gradient(rgba(99, 102, 241, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.02) 1px, transparent 1px),
-    radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.06), transparent 80%),
-    radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.06), transparent 50%),
+    linear-gradient(rgba(0, 242, 254, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 242, 254, 0.025) 1px, transparent 1px),
+    radial-gradient(circle at 50% -20%, rgba(0, 242, 254, 0.12), transparent 70%),
+    radial-gradient(circle at 0% 100%, rgba(255, 0, 127, 0.08), transparent 50%),
     var(--ql-bg);
-  background-size: 20px 20px, 20px 20px, 100% 100%, 100% 100%, 100% 100%;
+  background-size: 24px 24px, 24px 24px, 100% 100%, 100% 100%, 100% 100%;
 }
 
 body.sp-light {
@@ -398,11 +398,11 @@ textarea,
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.25);
+  background: rgba(0, 242, 254, 0.25);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.45);
+  background: rgba(0, 242, 254, 0.45);
 }
 
 /* Premium gradient brand text style */
@@ -413,7 +413,7 @@ textarea,
   background: linear-gradient(135deg, #ffffff 40%, var(--ql-accent) 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  text-shadow: 0 2px 10px rgba(99, 102, 241, 0.15) !important;
+  text-shadow: 0 2px 12px rgba(0, 242, 254, 0.25) !important;
 }
 
 .sp-brand-text::before {
@@ -439,9 +439,9 @@ textarea,
 .ql-btn:hover,
 .pk-discord-cta:hover {
   border-color: var(--ql-border-hover) !important;
-  box-shadow: 0 0 16px rgba(139, 92, 246, 0.2) !important;
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.25) !important;
   filter: brightness(1.15) !important;
-  text-shadow: 0 0 4px rgba(139, 92, 246, 0.3) !important;
+  text-shadow: 0 0 4px rgba(0, 242, 254, 0.3) !important;
 }
 
 .sp-btn-feature:active,
