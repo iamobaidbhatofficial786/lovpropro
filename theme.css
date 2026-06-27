@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
 /**
  * Lovable Powerkits — Premium Advanced Developer Theme
@@ -7,7 +7,7 @@
 :root {
   color-scheme: dark;
 
-  --ql-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ql-font-family: 'Space Grotesk', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --ql-font-mono: 'JetBrains Mono', monospace;
 
   --ql-bg: #030308; /* Deep Obsidian Space Black */
@@ -469,5 +469,117 @@ textarea,
 .ql-pkg-card:hover {
   border-color: var(--ql-border-hover) !important;
   box-shadow: var(--ql-shadow-hover) !important;
+}
+
+/* --- ADVANCED NEON INTERFACE ANGLE AND GLOW STYLINGS --- */
+
+/* Breathing border shimmer animation on major cards and inputs */
+@keyframes ql-neon-breathe {
+  0% {
+    border-color: rgba(0, 242, 254, 0.16);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 242, 254, 0.05);
+  }
+  50% {
+    border-color: rgba(255, 0, 127, 0.35);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 0, 127, 0.2);
+  }
+  100% {
+    border-color: rgba(0, 242, 254, 0.16);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 242, 254, 0.05);
+  }
+}
+
+.sp-profile-card,
+.sp-pkg-card,
+.ql-pkg-card,
+.sp-notif-panel,
+.pk-publish-modal {
+  animation: ql-neon-breathe 6s infinite ease-in-out !important;
+}
+
+/* Gradient shimmer sweep animation for action elements */
+@keyframes ql-shimmer-sweep {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.sp-send-btn,
+.sp-btn-primary,
+.pk-publish-open {
+  background: linear-gradient(90deg, #00f2fe, #ff007f, #00f2fe) !important;
+  background-size: 200% auto !important;
+  animation: ql-shimmer-sweep 4s linear infinite !important;
+  font-family: var(--ql-font-family) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5) !important;
+}
+
+.sp-send-btn:hover,
+.sp-btn-primary:hover,
+.pk-publish-open:hover {
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.45) !important;
+  transform: translateY(-1.5px) scale(1.02) !important;
+}
+
+/* Futuristic Neon Separator line at top header */
+.sp-header {
+  position: relative;
+  background: rgba(9, 10, 20, 0.8) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 242, 254, 0.15) !important;
+}
+
+.sp-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ql-accent), var(--ql-accent-hover), transparent);
+  box-shadow: 0 0 8px var(--ql-accent);
+}
+
+/* Enhanced input unified card borders */
+.sp-textarea {
+  border-color: rgba(0, 242, 254, 0.2) !important;
+  background: rgba(3, 3, 8, 0.6) !important;
+}
+
+.sp-action-bar {
+  border-color: rgba(0, 242, 254, 0.2) !important;
+  background: rgba(3, 3, 8, 0.6) !important;
+}
+
+.sp-textarea:focus {
+  border-color: var(--ql-accent-hover) !important;
+  box-shadow: 0 -4px 20px rgba(255, 0, 127, 0.15) !important;
+}
+
+.sp-textarea:focus + #sp-attach-preview + .sp-action-bar,
+.sp-textarea:focus + .sp-action-bar {
+  border-color: var(--ql-accent-hover) !important;
+  box-shadow: 0 4px 20px rgba(255, 0, 127, 0.15) !important;
+}
+
+/* Modern Glowing status badges */
+.sp-badge-pro {
+  background: rgba(0, 255, 135, 0.06) !important;
+  color: #00ff87 !important;
+  border: 1px solid rgba(0, 255, 135, 0.2) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 135, 0.1);
+  text-shadow: 0 0 4px rgba(0, 255, 135, 0.2);
+}
+
+.sp-badge-test {
+  background: rgba(255, 183, 0, 0.06) !important;
+  color: #ffb700 !important;
+  border: 1px solid rgba(255, 183, 0, 0.2) !important;
+  box-shadow: 0 0 10px rgba(255, 183, 0, 0.1);
+  text-shadow: 0 0 4px rgba(255, 183, 0, 0.2);
 }
 
