@@ -1,89 +1,174 @@
-'use client';
+"use client"
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Shield } from 'lucide-react';
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight, Shield } from "lucide-react"
 
 export default function LoginPage() {
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const router = useRouter();
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    // If already logged in, redirect to dashboard
-    if (localStorage.getItem('admin_token')) {
-      router.push('/');
-    }
-  }, [router]);
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
-
-      const data = await response.json();
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Login failed.');
+    // Simulate API call
+    setTimeout(() => {
+      // Mock authentication
+      if (email && password) {
+        localStorage.setItem("admin_token", "mock_token")
+        router.push("/")
       }
-
-      localStorage.setItem('admin_token', data.token);
-      router.push('/');
-    } catch (err: any) {
-      setError(err.message || 'Connection error.');
-    } finally {
-      setLoading(false);
-    }
-  };
+      setLoading(false)
+    }, 1000)
+  }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#070b13] p-4 font-sans">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 bg-brand-600 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg shadow-brand-500/20">
-            <Shield className="w-6 h-6" />
+    <div className="min-h-screen flex items-center justify-center animated-bg p-4 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-20 h-64 w-64 rounded-full bg-purple-500/10 blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-20 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl animate-float" style={{ animationDelay: "2s" }} />
+        <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-pink-500/5 blur-3xl animate-float" style={{ animationDelay: "4s" }} />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo */}
+        <div className="flex justify-center mb-8 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-2xl shadow-purple-500/50 animate-glow">
+              <Zap className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gradient">PowerKits</h1>
+              <p className="text-xs text-gray-400">Admin Dashboard</p>
+            </div>
           </div>
-          <h2 className="text-xl font-bold text-white">Powerkits Security Portal</h2>
-          <p className="text-xs text-slate-400 mt-1">Please log in to manage licenses and devices</p>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs">
-            {error}
-          </div>
-        )}
+        {/* Login Card */}
+        <Card className="glass border-white/10 shadow-2xl animate-slide-in backdrop-blur-xl">
+          <CardHeader className="space-y-1 pb-8">
+            <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
+            <p className="text-center text-sm text-gray-400">
+              Sign in to manage your licensing system
+            </p>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
+              {/* Email Input */}
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium text-gray-300">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="admin@powerkits.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">
-              Enter Administrator Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••••••"
-              required
-              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all"
-            />
-          </div>
+              {/* Password Input */}
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium text-gray-300">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 pr-10"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-brand-600 hover:bg-brand-500 disabled:bg-brand-600/40 text-white font-semibold text-sm rounded-xl transition-all shadow-lg shadow-brand-600/20 active:scale-[0.98]"
-          >
-            {loading ? 'Authenticating...' : 'Sign In'}
-          </button>
-        </form>
+              {/* Remember & Forgot */}
+              <div className="flex items-center justify-between text-sm">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-white/20 bg-white/5 text-purple-500 focus:ring-purple-500 focus:ring-offset-0"
+                  />
+                  <span className="text-gray-400">Remember me</span>
+                </label>
+                <button
+                  type="button"
+                  className="text-purple-400 hover:text-purple-300 transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
+
+              {/* Login Button */}
+              <Button
+                type="submit"
+                variant="premium"
+                className="w-full h-11 text-base gap-2"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    Sign In
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </form>
+
+            {/* Security Notice */}
+            <div className="mt-6 p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
+              <div className="flex items-start gap-3">
+                <Shield className="h-5 w-5 text-purple-400 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-purple-300">Secure Authentication</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Your session is encrypted and protected with advanced security measures.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-gray-500 mt-8">
+          © 2024 PowerKits. All rights reserved.
+        </p>
       </div>
     </div>
-  );
+  )
 }

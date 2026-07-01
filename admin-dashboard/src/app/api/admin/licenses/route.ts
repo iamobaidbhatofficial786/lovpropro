@@ -3,11 +3,23 @@ import { getSupabaseAdmin } from '../../../../lib/supabase';
 import { generateLicenseKey, sha256 } from '../../../../lib/crypto';
 import jwt from 'jsonwebtoken';
 
+class AuthError extends Error {
+  status = 401;
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthError';
+  }
+}
+
 function verifyAuth(request: Request) {
   const authHeader = request.headers.get('authorization') || '';
   const token = authHeader.replace(/^Bearer\s+/i, '');
   const adminSecret = process.env.ADMIN_SECRET || 'fallback_secret';
-  return jwt.verify(token, adminSecret);
+  try {
+    return jwt.verify(token, adminSecret);
+  } catch (err: any) {
+    throw new AuthError(err.message || 'Unauthorized');
+  }
 }
 
 // GET: list & search licenses
@@ -38,7 +50,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: true, licenses });
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 401 });
+    const status = err instanceof AuthError ? 401 : 500;
+    return NextResponse.json({ success: false, error: err.message }, { status });
   }
 }
 
@@ -98,7 +111,8 @@ export async function POST(request: Request) {
     // Return the raw key to show the user ONCE
     return NextResponse.json({ success: true, license, rawKey });
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    const status = err instanceof AuthError ? 401 : 500;
+    return NextResponse.json({ success: false, error: err.message }, { status });
   }
 }
 
@@ -156,7 +170,8 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({ success: true, license });
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    const status = err instanceof AuthError ? 401 : 500;
+    return NextResponse.json({ success: false, error: err.message }, { status });
   }
 }
 
@@ -178,6 +193,7 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    const status = err instanceof AuthError ? 401 : 500;
+    return NextResponse.json({ success: false, error: err.message }, { status });
   }
 }

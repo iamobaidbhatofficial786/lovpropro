@@ -1,29 +1,36 @@
-import React from 'react';
-import type { Metadata } from 'next';
-import './globals.css';
-import Sidebar from '../components/Sidebar';
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+import { Sidebar } from '@/components/layout/sidebar'
+import { Header } from '@/components/layout/header'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Lovable Powerkits Admin Dashboard',
-  description: 'Licensing, Device Locking and Security Center',
-};
+  title: 'PowerKits Admin - Licensing Dashboard',
+  description: 'Professional Chrome Extension Licensing System',
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="flex h-screen bg-[#070b13] overflow-hidden text-slate-100">
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto min-h-screen">
-          {/* Note: Sidebar is 64 (w-64) wide. We wrap children in layout margins. */}
-          <div className="min-h-screen">
-            {children}
+    <html lang="en" className="dark">
+      <body className={inter.className}>
+        <div className="flex h-screen overflow-hidden animated-bg">
+          <Sidebar />
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <Header />
+            <main className="flex-1 overflow-y-auto p-6">
+              <div className="mx-auto max-w-7xl">
+                {children}
+              </div>
+            </main>
           </div>
-        </main>
+        </div>
       </body>
     </html>
-  );
+  )
 }

@@ -2,10 +2,22 @@ import { NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '../../../../../lib/supabase';
 import jwt from 'jsonwebtoken';
 
+class AuthError extends Error {
+  status = 401;
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthError';
+  }
+}
+
 function verifyAuth(request: Request) {
   const authHeader = request.headers.get('authorization') || '';
   const token = authHeader.replace(/^Bearer\s+/i, '');
-  return jwt.verify(token, process.env.ADMIN_SECRET || 'fallback_secret');
+  try {
+    return jwt.verify(token, process.env.ADMIN_SECRET || 'fallback_secret');
+  } catch (err: any) {
+    throw new AuthError(err.message || 'Unauthorized');
+  }
 }
 
 export async function POST(request: Request) {
@@ -37,6 +49,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, message: 'User access removed. Extension will logout within ~30s.' });
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    const status = err instanceof AuthError ? 401 : 500;
+    return NextResponse.json({ success: false, error: err.message }, { status });
   }
 }

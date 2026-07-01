@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import AdminGuard from '../../components/AdminGuard';
 import { ShieldAlert, RefreshCw, Key, Laptop, Globe, Info } from 'lucide-react';
 
@@ -22,13 +23,26 @@ export default function LogsPage() {
   const [loading, setLoading] = useState(true);
   const [typeFilter, setTypeFilter] = useState<'all' | 'activations' | 'security'>('all');
   const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
+
+  const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+    const token = localStorage.getItem('admin_token');
+    const headers = {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`,
+    };
+    const res = await fetch(url, { ...options, headers });
+    if (res.status === 401) {
+      localStorage.removeItem('admin_token');
+      router.push('/login?expired=true');
+      throw new Error('Unauthorized');
+    }
+    return res;
+  };
 
   const fetchLogs = async () => {
     try {
-      const token = localStorage.getItem('admin_token');
-      const res = await fetch(`/api/admin/logs?type=${typeFilter}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetchWithAuth(`/api/admin/logs?type=${typeFilter}`);
       const data = await res.json();
       if (res.ok && data.success) {
         setLogs(data.logs);

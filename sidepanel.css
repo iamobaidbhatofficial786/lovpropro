@@ -408,27 +408,27 @@ body { animation: sp-fade-in 0.4s ease-out; }
 /* --- Animated SVG Logo Components --- */
 .logo-ring-outer {
   transform-origin: center;
-  animation: logo-rotate 10s linear infinite;
+  animation: logo-spin-clockwise 8s linear infinite !important;
 }
 
-.logo-flow-pulse-1 {
-  stroke-dasharray: 30 70;
-  animation: logo-flow-forward 2.5s linear infinite;
+.logo-orbit-1-group {
+  transform-origin: 50px 50px;
+  animation: logo-orbit-rotate-1 4s linear infinite !important;
 }
 
-.logo-flow-pulse-2 {
-  stroke-dasharray: 30 70;
-  animation: logo-flow-backward 2.5s linear infinite;
+.logo-orbit-2-group {
+  transform-origin: 50px 50px;
+  animation: logo-orbit-rotate-2 5s linear infinite !important;
 }
 
 .logo-core {
   transform-origin: center;
-  animation: logo-pulse-breath 3s ease-in-out infinite;
+  animation: logo-core-breath 2.5s ease-in-out infinite !important;
 }
 
-.logo-core-inner {
-  transform-origin: center;
-  animation: logo-pulse-breath-inner 3s ease-in-out infinite;
+.logo-core-star {
+  transform-origin: 50px 50px;
+  animation: logo-spin-clockwise 15s linear infinite !important;
 }
 
 /* Realtime Broadcast Announcement Banner */
@@ -454,28 +454,364 @@ body { animation: sp-fade-in 0.4s ease-out; }
 }
 
 /* --- SVG Keyframe Animations --- */
-@keyframes logo-rotate {
+@keyframes logo-spin-clockwise {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-@keyframes logo-flow-forward {
-  0% { stroke-dashoffset: 100; }
-  100% { stroke-dashoffset: 0; }
+@keyframes logo-orbit-rotate-1 {
+  0% { transform: rotate(45deg); }
+  100% { transform: rotate(405deg); }
 }
 
-@keyframes logo-flow-backward {
-  0% { stroke-dashoffset: -100; }
-  100% { stroke-dashoffset: 0; }
+@keyframes logo-orbit-rotate-2 {
+  0% { transform: rotate(-45deg); }
+  100% { transform: rotate(-405deg); }
 }
 
-@keyframes logo-pulse-breath {
-  0%, 100% { transform: scale(0.9); opacity: 0.8; }
-  50% { transform: scale(1.1); opacity: 1; }
+@keyframes logo-core-breath {
+  0%, 100% { transform: scale(0.85); opacity: 0.9; }
+  50% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 12px #ec4899); }
 }
 
-@keyframes logo-pulse-breath-inner {
-  0%, 100% { transform: scale(0.8); opacity: 0.9; }
-  50% { transform: scale(1.2); opacity: 1; }
+/* ==========================================================
+   PREMIUM GLASSMORPHISM & NEURAL DASHBOARD REDESIGN (v7.0)
+   ========================================================== */
+
+/* 1. Global Page Aesthetics & Ambient Backdrops */
+body {
+  background-color: #04060f !important;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.12) 0px, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.005) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.005) 1px, transparent 1px) !important;
+  background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px !important;
+  font-family: 'Hanken Grotesk', 'Inter', sans-serif !important;
 }
 
+/* Glassmorphism Header */
+.sp-header {
+  background: rgba(15, 22, 42, 0.65) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.sp-brand-text {
+  font-weight: 800 !important;
+  background: linear-gradient(135deg, #ffffff 30%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.01em;
+}
+
+/* 2. Premium Content Wrappers */
+.sp-profile-card {
+  background: rgba(30, 41, 59, 0.25) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.sp-profile-card:hover {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  box-shadow: 0 12px 40px 0 rgba(139, 92, 246, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+/* 3. The Tech Prompt Console (Composer) */
+.sp-textarea {
+  border-radius: 16px 16px 0 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: none !important;
+  background: rgba(10, 15, 30, 0.7) !important;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease !important;
+  font-size: 13.5px !important;
+}
+.sp-textarea:focus {
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  box-shadow: 0 -8px 24px rgba(139, 92, 246, 0.12) !important;
+  background: rgba(8, 12, 24, 0.8) !important;
+}
+
+.sp-action-bar {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top: none !important;
+  border-radius: 0 0 16px 16px !important;
+  background: rgba(10, 15, 30, 0.7) !important;
+  backdrop-filter: blur(10px);
+  padding: 8px 16px 14px 16px !important;
+  transition: all 0.3s ease !important;
+}
+.sp-textarea:focus + #sp-attach-preview + .sp-action-bar,
+.sp-textarea:focus + .sp-action-bar {
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.12) !important;
+  background: rgba(8, 12, 24, 0.8) !important;
+}
+
+.sp-send-btn {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%) !important;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.3) !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+  padding: 8px 20px !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.sp-send-btn:hover {
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5) !important;
+  transform: translateY(-1.5px) scale(1.02);
+}
+
+/* 4. Interactive Suggestion Chips with Custom Themes */
+.sp-shortcuts-title {
+  font-weight: 800 !important;
+  font-size: 9.5px !important;
+  letter-spacing: 0.16em !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  margin-top: 10px !important;
+}
+
+.sp-shortcuts-grid {
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+.sp-chip {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 12px !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  padding: 10px 8px !important;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+/* Dynamic Hover Color Schemes based on index order */
+/* 1. Bugs (Red) */
+.sp-chip:nth-child(1):hover {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  color: #fca5a5 !important;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+/* 2. Refactor (Purple) */
+.sp-chip:nth-child(2):hover {
+  background: rgba(168, 85, 247, 0.12) !important;
+  border-color: rgba(168, 85, 247, 0.5) !important;
+  color: #d8b4fe !important;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+/* 3. Errors (Pink-Red) */
+.sp-chip:nth-child(3):hover {
+  background: rgba(244, 63, 94, 0.12) !important;
+  border-color: rgba(244, 63, 94, 0.5) !important;
+  color: #fecdd3 !important;
+  box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+/* 4. Optimize (Yellow/Amber) */
+.sp-chip:nth-child(4):hover {
+  background: rgba(234, 179, 8, 0.12) !important;
+  border-color: rgba(234, 179, 8, 0.5) !important;
+  color: #fef08a !important;
+  box-shadow: 0 4px 15px rgba(234, 179, 8, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+/* 5. Comments (Blue) */
+.sp-chip:nth-child(5):hover {
+  background: rgba(59, 130, 246, 0.12) !important;
+  border-color: rgba(59, 130, 246, 0.5) !important;
+  color: #93c5fd !important;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+/* 6. SEO (Emerald) */
+.sp-chip:nth-child(6):hover {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  color: #6ee7b7 !important;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+/* 7. UI (Pink) */
+.sp-chip:nth-child(7):hover {
+  background: rgba(236, 72, 153, 0.12) !important;
+  border-color: rgba(236, 72, 153, 0.5) !important;
+  color: #fbcfe8 !important;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+/* 8. Components (Cyan) */
+.sp-chip:nth-child(8):hover {
+  background: rgba(6, 182, 212, 0.12) !important;
+  border-color: rgba(6, 182, 212, 0.5) !important;
+  color: #a5f3fc !important;
+  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+/* 9. Review (Orange) */
+.sp-chip:nth-child(9):hover {
+  background: rgba(249, 115, 22, 0.12) !important;
+  border-color: rgba(249, 115, 22, 0.5) !important;
+  color: #ffedd5 !important;
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+
+/* 5. Collapsible Advanced Options Panel */
+.sp-advanced-toggle {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  font-weight: 800 !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.sp-advanced-toggle:hover {
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  color: #fff !important;
+}
+
+.sp-advanced-panel {
+  background: rgba(10, 15, 30, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  border-radius: 14px !important;
+  padding: 12px !important;
+  margin-top: 8px !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  animation: slide-fade-in 0.3s ease-out;
+}
+
+@keyframes slide-fade-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Sleek Action Buttons within Advanced Options */
+/* Watermark Removal */
+#sp-remove-watermark {
+  background: rgba(239, 68, 68, 0.04) !important;
+  border: 1px solid rgba(239, 68, 68, 0.15) !important;
+  color: #fca5a5 !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+}
+#sp-remove-watermark:hover {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Shield Toggle */
+#sp-shield-btn {
+  background: rgba(59, 130, 246, 0.04) !important;
+  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+  color: #93c5fd !important;
+  border-radius: 10px !important;
+}
+#sp-shield-btn:hover {
+  background: rgba(59, 130, 246, 0.12) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+#sp-shield-btn.sp-shield-active {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.45) !important;
+  color: #a7f3d0 !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.25) !important;
+}
+
+/* Credit Bypass */
+#sp-bypass-btn {
+  background: rgba(6, 182, 212, 0.04) !important;
+  border: 1px solid rgba(6, 182, 212, 0.15) !important;
+  color: #a5f3fc !important;
+  border-radius: 10px !important;
+}
+#sp-bypass-btn:hover {
+  background: rgba(6, 182, 212, 0.12) !important;
+  border-color: rgba(6, 182, 212, 0.4) !important;
+}
+#sp-bypass-btn:not(.sp-bypass-disabled-active) {
+  background: rgba(6, 182, 212, 0.12) !important;
+  border-color: rgba(6, 182, 212, 0.45) !important;
+  color: #a5f3fc !important;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.25) !important;
+}
+
+/* Native Chat */
+#sp-native-chat-btn {
+  background: rgba(139, 92, 246, 0.04) !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+  color: #c084fc !important;
+  border-radius: 10px !important;
+}
+#sp-native-chat-btn:hover {
+  background: rgba(139, 92, 246, 0.12) !important;
+  border-color: rgba(139, 92, 246, 0.4) !important;
+}
+
+/* Download Project Code */
+#sp-download-project {
+  background: rgba(249, 115, 22, 0.04) !important;
+  border: 1px solid rgba(249, 115, 22, 0.15) !important;
+  color: #ffedd5 !important;
+  border-radius: 10px !important;
+}
+#sp-download-project:hover {
+  background: rgba(249, 115, 22, 0.12) !important;
+  border-color: rgba(249, 115, 22, 0.4) !important;
+}
+
+/* Quick Init */
+#sp-quick-init {
+  background: rgba(16, 185, 129, 0.04) !important;
+  border: 1px solid rgba(16, 185, 129, 0.15) !important;
+  color: #a7f3d0 !important;
+  border-radius: 10px !important;
+}
+#sp-quick-init:hover {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+/* Publish Project & Lovable Cloud */
+#sp-publish-project, #sp-enable-cloud {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  border-radius: 10px !important;
+}
+#sp-publish-project:hover, #sp-enable-cloud:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+}
+
+/* 6. Tabs Redesign */
+.sp-tabs {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 12px !important;
+}
+.sp-tab.sp-tab-active {
+  background: rgba(139, 92, 246, 0.2) !important;
+  border: 1px solid rgba(139, 92, 246, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15) !important;
+}
+
+/* 7. Footer Stylings */
+.sp-footer {
+  background: rgba(10, 15, 30, 0.4) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+}

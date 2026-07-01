@@ -39,7 +39,20 @@ export default function LicensesPage() {
   const [notes, setNotes] = useState('');
   const [status, setStatus] = useState('active');
   const [customDays, setCustomDays] = useState('');
+  const [customMinutes, setCustomMinutes] = useState('');
   const [generatedKey, setGeneratedKey] = useState('');
+
+  const formatDatetimeLocal = (dateOrStr: Date | string | null) => {
+    if (!dateOrStr) return '';
+    const date = typeof dateOrStr === 'string' ? new Date(dateOrStr) : dateOrStr;
+    if (isNaN(date.getTime())) return '';
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+  };
   const [selectedLicense, setSelectedLicense] = useState<License | null>(null);
   const [adminMessage, setAdminMessage] = useState('');
   const [supportUrl, setSupportUrl] = useState('');
@@ -239,6 +252,7 @@ export default function LicensesPage() {
 
   const handleCustomDaysChange = (daysStr: string) => {
     setCustomDays(daysStr);
+    setCustomMinutes('');
     if (!daysStr) {
       setExpiresAt('');
       return;
@@ -247,10 +261,22 @@ export default function LicensesPage() {
     if (!isNaN(days) && days > 0) {
       const date = new Date();
       date.setDate(date.getDate() + days);
-      const yyyy = date.getFullYear();
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const dd = String(date.getDate()).padStart(2, '0');
-      setExpiresAt(`${yyyy}-${mm}-${dd}`);
+      setExpiresAt(formatDatetimeLocal(date));
+    }
+  };
+
+  const handleCustomMinutesChange = (minutesStr: string) => {
+    setCustomMinutes(minutesStr);
+    setCustomDays('');
+    if (!minutesStr) {
+      setExpiresAt('');
+      return;
+    }
+    const minutes = parseInt(minutesStr, 10);
+    if (!isNaN(minutes) && minutes > 0) {
+      const date = new Date();
+      date.setMinutes(date.getMinutes() + minutes);
+      setExpiresAt(formatDatetimeLocal(date));
     }
   };
 
@@ -261,6 +287,7 @@ export default function LicensesPage() {
     setMaxDevices(1);
     setExpiresAt('');
     setCustomDays('');
+    setCustomMinutes('');
     setNotes('');
     setAdminMessage('');
     setSupportUrl('');
@@ -273,12 +300,13 @@ export default function LicensesPage() {
     setCustomerName(license.customer_name || '');
     setCustomerEmail(license.customer_email || '');
     setMaxDevices(license.max_devices);
-    setExpiresAt(license.expires_at ? license.expires_at.split('T')[0] : '');
+    setExpiresAt(license.expires_at ? formatDatetimeLocal(license.expires_at) : '');
     setNotes(license.notes);
     setStatus(license.status || 'active');
     setAdminMessage(license.admin_message || '');
     setSupportUrl(license.support_url || '');
     setCustomDays('');
+    setCustomMinutes('');
     setEditModalOpen(true);
   };
 
@@ -480,12 +508,23 @@ export default function LicensesPage() {
                   />
                 </div>
                 <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Custom Minutes (Optional)</label>
+                  <input
+                    type="number"
+                    value={customMinutes}
+                    onChange={(e) => handleCustomMinutesChange(e.target.value)}
+                    placeholder="Enter validity minutes (e.g. 10)"
+                    min={1}
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
+                  />
+                </div>
+                <div>
                   <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Expiration Date (Optional)</label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     value={expiresAt}
                     onChange={(e) => setExpiresAt(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
                   />
                 </div>
                 <div>
@@ -581,12 +620,23 @@ export default function LicensesPage() {
                   />
                 </div>
                 <div>
+                  <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Custom Minutes (Optional)</label>
+                  <input
+                    type="number"
+                    value={customMinutes}
+                    onChange={(e) => handleCustomMinutesChange(e.target.value)}
+                    placeholder="Enter validity minutes (e.g. 10)"
+                    min={1}
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
+                  />
+                </div>
+                <div>
                   <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Expiration Date (Optional)</label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     value={expiresAt}
                     onChange={(e) => setExpiresAt(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-200"
                   />
                 </div>
                 <div>

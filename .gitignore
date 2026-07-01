@@ -1,37 +1,71 @@
-# Next.js build output
-.next/
-out/
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Next.js
+admin-dashboard/.next/
+admin-dashboard/out/
+admin-dashboard/build/
+admin-dashboard/dist/
 
 # Vercel
-.vercel/
+.vercel
+admin-dashboard/.vercel/
+vercel-api/.vercel/
 
-# Obfuscated extension output
+# Production
 dist/
+build/
 
-# Dependency directories
-node_modules/
-jspm_packages/
-
-# IDE files
-.idea/
-.vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OS files
+# Misc
 .DS_Store
-Thumbs.db
+*.pem
+*.log
+*.swp
+*.swo
+*~
 
-# Private env files
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
 .env
+.env*.local
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-*.private.pem
-*.private
-*.pem
 
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+Thumbs.db
+
+# Don't ignore example env files
+!.env.example
+
+# Extension build artifacts
+obfuscation/node_modules/
+obfuscation/dist/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Keys (security)
+private.pem
+pkcs8_private.pem
+public.pem
+
+# Documentation test files (can be removed if you want)
+DESIGN_VERIFICATION.html

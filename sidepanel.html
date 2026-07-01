@@ -4,38 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ByPass Ai</title>
-  <link rel="stylesheet" href="theme.css?v=6.4.5a">
-  <link rel="stylesheet" href="sidepanel.css?v=6.4.5a">
+  <link rel="stylesheet" href="theme.css?v=6.4.6-new-ui">
+  <link rel="stylesheet" href="sidepanel.css?v=6.4.6-new-ui">
 </head>
 <body>
   <div class="sp-header">
     <div class="sp-brand">
       <svg class="sp-brand-logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <filter id="logo-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="6" result="blur" />
+          <filter id="logo-neon-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
-          <linearGradient id="logo-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="var(--ql-accent, #6366f1)" />
-            <stop offset="100%" stop-color="#a855f7" />
+          <linearGradient id="logo-theme-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8b5cf6" />
+            <stop offset="50%" stop-color="#ec4899" />
+            <stop offset="100%" stop-color="#3b82f6" />
           </linearGradient>
-          <linearGradient id="logo-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#3b82f6" />
-            <stop offset="100%" stop-color="var(--ql-accent, #6366f1)" />
+          <linearGradient id="logo-theme-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#06b6d4" />
+            <stop offset="100%" stop-color="#6366f1" />
           </linearGradient>
         </defs>
-        <circle cx="50" cy="50" r="42" fill="none" stroke="url(#logo-grad-1)" stroke-width="3" opacity="0.15" />
-        <circle class="logo-ring-outer" cx="50" cy="50" r="40" fill="none" stroke="url(#logo-grad-1)" stroke-width="4" stroke-linecap="round" stroke-dasharray="180 60" />
-        <path class="logo-bypass-path-1" d="M 15 50 C 35 20, 65 20, 85 50" fill="none" stroke="url(#logo-grad-2)" stroke-width="6" stroke-linecap="round" />
-        <path class="logo-bypass-path-2" d="M 85 50 C 65 80, 35 80, 15 50" fill="none" stroke="url(#logo-grad-2)" stroke-width="6" stroke-linecap="round" />
-        <path class="logo-flow-pulse-1" d="M 15 50 C 35 20, 65 20, 85 50" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" filter="url(#logo-glow)" opacity="0.9" />
-        <path class="logo-flow-pulse-2" d="M 85 50 C 65 80, 35 80, 15 50" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" filter="url(#logo-glow)" opacity="0.9" />
-        <circle class="logo-core" cx="50" cy="50" r="14" fill="url(#logo-grad-1)" filter="url(#logo-glow)" />
-        <circle class="logo-core-inner" cx="50" cy="50" r="7" fill="#ffffff" />
+        <!-- Outer Glowing Ring -->
+        <circle class="logo-ring-outer" cx="50" cy="50" r="42" fill="none" stroke="url(#logo-theme-grad-1)" stroke-width="3" stroke-dasharray="160 80" stroke-linecap="round" />
+        <!-- Orbit 1 (45deg tilted) -->
+        <g class="logo-orbit-1-group">
+          <ellipse class="logo-orbit-1" cx="50" cy="50" rx="30" ry="10" fill="none" stroke="url(#logo-theme-grad-2)" stroke-width="2" opacity="0.6" />
+          <circle class="logo-dot-1" cx="80" cy="50" r="4" fill="#06b6d4" filter="url(#logo-neon-glow)" />
+        </g>
+        <!-- Orbit 2 (-45deg tilted) -->
+        <g class="logo-orbit-2-group">
+          <ellipse class="logo-orbit-2" cx="50" cy="50" rx="30" ry="10" fill="none" stroke="url(#logo-theme-grad-2)" stroke-width="2" opacity="0.6" />
+          <circle class="logo-dot-2" cx="20" cy="50" r="4" fill="#ec4899" filter="url(#logo-neon-glow)" />
+        </g>
+        <!-- Pulsing Neural Core -->
+        <circle class="logo-core" cx="50" cy="50" r="10" fill="url(#logo-theme-grad-1)" filter="url(#logo-neon-glow)" />
+        <polygon class="logo-core-star" points="50,45 52,49 56,50 52,51 50,55 48,51 44,50 48,49" fill="#ffffff" />
       </svg>
       <span class="sp-brand-text">ByPass Ai</span>
       <span class="sp-badge">PRO</span>

@@ -2,7 +2,7 @@
  * Lovable Powerkits — extension configuration
  */
 var EXTENSION_NAME = "ByPass Ai";
-var EXTENSION_VERSION = "6.4.5";
+var EXTENSION_VERSION = "6.4.6";
 var DEFAULT_LICENSE_USER_NAME = "Licensed User";
 
 /** Single source for UI version labels (footer, badges). Keep in sync with manifest.json version. */

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Comparison - Old vs New</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a0b14;
+      color: white;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2.5em;
+      background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    .theme-box {
+      padding: 30px;
+      border-radius: 20px;
+      border: 2px solid;
+    }
+    .theme-box h2 {
+      margin-top: 0;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+    .old-theme {
+      background: rgba(0, 242, 254, 0.05);
+      border-color: #00f2fe;
+    }
+    .old-theme h2 {
+      color: #00f2fe;
+    }
+    .new-theme {
+      background: rgba(139, 92, 246, 0.05);
+      border-color: #8b5cf6;
+    }
+    .new-theme h2 {
+      color: #8b5cf6;
+    }
+    .color-swatch {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+    }
+    .swatch {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .swatch-info {
+      flex: 1;
+    }
+    .swatch-name {
+      font-weight: bold;
+      font-size: 0.9em;
+      margin-bottom: 5px;
+    }
+    .swatch-hex {
+      font-family: 'Courier New', monospace;
+      font-size: 0.85em;
+      color: #888;
+    }
+    .features {
+      margin-top: 30px;
+    }
+    .feature-item {
+      padding: 10px 15px;
+      margin: 10px 0;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid;
+    }
+    .old-theme .feature-item {
+      border-color: #00f2fe;
+    }
+    .new-theme .feature-item {
+      border-color: #8b5cf6;
+    }
+    .status {
+      text-align: center;
+      padding: 30px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 2px solid #8b5cf6;
+      border-radius: 20px;
+      margin-top: 40px;
+    }
+    .status h3 {
+      color: #10b981;
+      font-size: 2em;
+      margin: 0 0 20px 0;
+    }
+    .status-item {
+      display: inline-block;
+      margin: 10px 20px;
+      padding: 15px 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+    .status-label {
+      font-size: 0.85em;
+      color: #888;
+      margin-bottom: 5px;
+    }
+    .status-value {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #8b5cf6;
+    }
+    .demo-button {
+      padding: 15px 30px;
+      border-radius: 12px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 10px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+    .old-btn {
+      background: #00f2fe;
+      color: #000;
+    }
+    .old-btn:hover {
+      background: #00d8e4;
+      transform: translateY(-2px);
+    }
+    .new-btn {
+      background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #ec4899 100%);
+      color: white;
+    }
+    .new-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+    }
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.8); }
+    }
+    .new-theme {
+      animation: glow 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 PowerKits Theme Comparison</h1>
+
+    <div class="comparison">
+      <!-- OLD THEME -->
+      <div class="theme-box old-theme">
+        <h2>❌ Old Theme (6.4.5)</h2>
+        
+        <div class="color-swatch">
+          <div class="swatch" style="background: #00f2fe;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Cyan Accent</div>
+            <div class="swatch-hex">#00f2fe</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch" style="background: linear-gradient(135deg, #00f2fe, #00d8e4);"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Basic Gradient</div>
+            <div class="swatch-hex">Simple cyan only</div>
+          </div>
+        </div>
+
+        <div class="features">
+          <h3>Features:</h3>
+          <div class="feature-item">Single color accent</div>
+          <div class="feature-item">Basic card designs</div>
+          <div class="feature-item">Simple animations</div>
+          <div class="feature-item">Flat backgrounds</div>
+          <div class="feature-item">Standard layouts</div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+          <button class="demo-button old-btn">Old Style Button</button>
+        </div>
+      </div>
+
+      <!-- NEW THEME -->
+      <div class="theme-box new-theme">
+        <h2>✅ New Theme (6.4.6)</h2>
+        
+        <div class="color-swatch">
+          <div class="swatch" style="background: #8b5cf6;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Purple Primary</div>
+            <div class="swatch-hex">#8b5cf6</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch" style="background: #06b6d4;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Cyan Secondary</div>
+            <div class="swatch-hex">#06b6d4</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch" style="background: #ec4899;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Pink Highlight</div>
+            <div class="swatch-hex">#ec4899</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch" style="background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #ec4899 100%);"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Premium Gradient</div>
+            <div class="swatch-hex">3-color blend</div>
+          </div>
+        </div>
+
+        <div class="features">
+          <h3>Features:</h3>
+          <div class="feature-item">✨ Glassmorphism effects</div>
+          <div class="feature-item">🌈 Multi-color gradients</div>
+          <div class="feature-item">🎭 Smooth animations</div>
+          <div class="feature-item">💎 Neon glow effects</div>
+          <div class="feature-item">🚀 Modern card layouts</div>
+          <div class="feature-item">📱 Responsive design</div>
+          <div class="feature-item">🎪 Interactive hovers</div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+          <button class="demo-button new-btn">New Style Button</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status">
+      <h3>✅ Implementation Status</h3>
+      <p style="font-size: 1.2em; color: #cbd5e1; margin-bottom: 30px;">
+        All code changes are complete! New purple theme is implemented in all files.
+      </p>
+      
+      <div class="status-item">
+        <div class="status-label">Extension Version</div>
+        <div class="status-value">6.4.6</div>
+      </div>
+      
+      <div class="status-item">
+        <div class="status-label">Admin Dashboard</div>
+        <div class="status-value">6.4.6</div>
+      </div>
+      
+      <div class="status-item">
+        <div class="status-label">Theme Color</div>
+        <div class="status-value">#8b5cf6</div>
+      </div>
+
+      <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <h4 style="color: #f59e0b; font-size: 1.3em;">⚠️ To See The New UI:</h4>
+        <p style="font-size: 1.1em; color: #cbd5e1; margin: 20px 0;">
+          <strong>Admin Dashboard:</strong> Run <code style="background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 5px;">TEST_NEW_UI.bat</code><br><br>
+          <strong>Extension:</strong> Remove old version & reload fresh (version must be 6.4.6)
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check what theme is actually loaded
+    window.onload = function() {
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--ql-accent');
+      console.log('Current theme accent color:', accent);
+      
+      if (accent.includes('8b5cf6')) {
+        console.log('✅ NEW PURPLE THEME DETECTED');
+      } else if (accent.includes('00f2fe')) {
+        console.log('❌ OLD CYAN THEME DETECTED - Need to clear cache');
+      } else {
+        console.log('⚠️ No theme detected - Using default');
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,48 +1,75 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 /**
- * Lovable Powerkits — Premium Advanced Developer Theme
- * Dark by default; light via body.sp-light / #ql-floating.ql-light
+ * PowerKits — Revolutionary Futuristic UI Theme
+ * Glassmorphic, Cyberpunk-inspired Design
  */
 :root {
   color-scheme: dark;
 
-  --ql-font-family: 'Space Grotesk', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ql-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --ql-font-mono: 'JetBrains Mono', monospace;
 
-  --ql-bg: #030308; /* Deep Obsidian Space Black */
-  --ql-bg-elevated: #090a14;
-  --ql-bg-surface: #101222;
-  --ql-bg-hover: #1b1e38;
-  --ql-border: rgba(0, 242, 254, 0.16); /* Cyber Cyan border */
-  --ql-border-hover: rgba(255, 0, 127, 0.45); /* Glowing Hot Magenta border */
+  /* Deep Space Background */
+  --ql-bg: #0a0b14;
+  --ql-bg-elevated: #12131f;
+  --ql-bg-surface: #1a1b2e;
+  --ql-bg-hover: #252741;
+  
+  /* Glassmorphic Layers */
+  --ql-glass: rgba(18, 19, 31, 0.75);
+  --ql-glass-light: rgba(26, 27, 46, 0.6);
+  --ql-overlay: rgba(10, 11, 20, 0.92);
+  
+  /* Neon Borders */
+  --ql-border: rgba(139, 92, 246, 0.15);
+  --ql-border-hover: rgba(139, 92, 246, 0.4);
+  --ql-border-glow: rgba(139, 92, 246, 0.6);
+  
+  /* Text Colors */
   --ql-text-primary: #ffffff;
-  --ql-text-secondary: #a9b7c6;
-  --ql-text-muted: #53627b;
-  --ql-accent: #00f2fe; /* Electric Cyber Cyan */
-  --ql-accent-hover: #ff007f; /* Hot Neon Magenta */
-  --ql-accent-glow: rgba(0, 242, 254, 0.3);
-  --ql-accent-subtle: rgba(0, 242, 254, 0.08);
-  --ql-link: #00f2fe;
-  --ql-gradient-primary: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #ff007f 100%);
-  --ql-gradient-shimmer: linear-gradient(90deg, #00f2fe, #ff007f, #00f2fe);
-  --ql-success: #00ff87;
-  --ql-success-bg: rgba(0, 255, 135, 0.08);
-  --ql-warning: #ffb700;
-  --ql-warning-bg: rgba(255, 183, 0, 0.08);
-  --ql-danger: #ff2a6d;
-  --ql-danger-bg: rgba(255, 42, 109, 0.08);
-  --ql-radius: 14px;
-  --ql-radius-sm: 10px;
-  --ql-radius-xs: 7px;
-  --ql-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
-  --ql-shadow-hover: 0 20px 45px -12px rgba(0, 242, 254, 0.2), 0 1px 0 rgba(255, 255, 255, 0.08) inset;
-  --ql-transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  --ql-glass: rgba(9, 10, 20, 0.85);
-  --ql-overlay: rgba(3, 3, 8, 0.9);
-  --ql-modal-bg: #090a14;
-  --ql-modal-surface: #101222;
-  --ql-chat-bubble-end: #00f2fe;
+  --ql-text-secondary: #cbd5e1;
+  --ql-text-muted: #64748b;
+  
+  /* Accent Colors - Purple/Cyan/Pink Gradient */
+  --ql-accent: #8b5cf6;
+  --ql-accent-hover: #a78bfa;
+  --ql-accent-cyan: #06b6d4;
+  --ql-accent-pink: #ec4899;
+  --ql-accent-glow: rgba(139, 92, 246, 0.3);
+  --ql-accent-subtle: rgba(139, 92, 246, 0.1);
+  --ql-link: #a78bfa;
+  
+  /* Premium Gradients */
+  --ql-gradient-primary: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #ec4899 100%);
+  --ql-gradient-shimmer: linear-gradient(90deg, #06b6d4, #8b5cf6, #ec4899, #8b5cf6, #06b6d4);
+  --ql-gradient-glass: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.1) 100%);
+  
+  /* Status Colors */
+  --ql-success: #10b981;
+  --ql-success-bg: rgba(16, 185, 129, 0.1);
+  --ql-warning: #f59e0b;
+  --ql-warning-bg: rgba(245, 158, 11, 0.1);
+  --ql-danger: #ef4444;
+  --ql-danger-bg: rgba(239, 68, 68, 0.1);
+  
+  /* Spacing & Borders */
+  --ql-radius: 16px;
+  --ql-radius-sm: 12px;
+  --ql-radius-xs: 8px;
+  
+  /* Shadows */
+  --ql-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  --ql-shadow-hover: 0 20px 50px -12px rgba(139, 92, 246, 0.25), 0 0 0 1px rgba(139, 92, 246, 0.2) inset;
+  --ql-shadow-glow: 0 0 30px rgba(139, 92, 246, 0.4), 0 0 60px rgba(139, 92, 246, 0.2);
+  
+  /* Animation */
+  --ql-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Modal Colors */
+  --ql-modal-bg: #12131f;
+  --ql-modal-surface: #1a1b2e;
+  --ql-chat-bubble-end: #8b5cf6;
 }
 
 body.sp-light,
@@ -80,12 +107,17 @@ body.sp-light,
 /* Modern digital developer workspace grid and subtle radial glow */
 body:not(.sp-light) {
   background:
-    linear-gradient(rgba(0, 242, 254, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 242, 254, 0.025) 1px, transparent 1px),
-    radial-gradient(circle at 50% -20%, rgba(0, 242, 254, 0.12), transparent 70%),
-    radial-gradient(circle at 0% 100%, rgba(255, 0, 127, 0.08), transparent 50%),
-    var(--ql-bg);
-  background-size: 24px 24px, 24px 24px, 100% 100%, 100% 100%, 100% 100%;
+    radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 70%),
+    linear-gradient(135deg, var(--ql-bg) 0%, #0f1020 100%);
+  background-size: 100% 100%;
+  animation: mesh-shift 20s ease-in-out infinite;
+}
+
+@keyframes mesh-shift {
+  0%, 100% { background-position: 0% 0%, 100% 100%, 50% 50%, 0% 0%; }
+  50% { background-position: 100% 100%, 0% 0%, 25% 75%, 0% 0%; }
 }
 
 body.sp-light {
@@ -391,18 +423,18 @@ textarea,
 
 /* Sleek custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 242, 254, 0.25);
-  border-radius: 3px;
+  background: linear-gradient(180deg, #8b5cf6, #ec4899);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 242, 254, 0.45);
+  background: linear-gradient(180deg, #a78bfa, #f472b6);
 }
 
 /* Premium gradient brand text style */
@@ -410,10 +442,11 @@ textarea,
   font-weight: 800 !important;
   font-family: var(--ql-font-family) !important;
   letter-spacing: -0.02em !important;
-  background: linear-gradient(135deg, #ffffff 40%, var(--ql-accent) 100%) !important;
+  background: var(--ql-gradient-primary) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  text-shadow: 0 2px 12px rgba(0, 242, 254, 0.25) !important;
+  background-clip: text !important;
+  text-shadow: none !important;
 }
 
 .sp-brand-text::before {
@@ -439,9 +472,9 @@ textarea,
 .ql-btn:hover,
 .pk-discord-cta:hover {
   border-color: var(--ql-border-hover) !important;
-  box-shadow: 0 0 16px rgba(0, 242, 254, 0.25) !important;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3) !important;
   filter: brightness(1.15) !important;
-  text-shadow: 0 0 4px rgba(0, 242, 254, 0.3) !important;
+  text-shadow: none !important;
 }
 
 .sp-btn-feature:active,
@@ -476,16 +509,16 @@ textarea,
 /* Breathing border shimmer animation on major cards and inputs */
 @keyframes ql-neon-breathe {
   0% {
-    border-color: rgba(0, 242, 254, 0.16);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 242, 254, 0.05);
+    border-color: var(--ql-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 10px rgba(139, 92, 246, 0.05);
   }
   50% {
-    border-color: rgba(255, 0, 127, 0.35);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 0, 127, 0.2);
+    border-color: var(--ql-border-hover);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(139, 92, 246, 0.2);
   }
   100% {
-    border-color: rgba(0, 242, 254, 0.16);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 242, 254, 0.05);
+    border-color: var(--ql-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 10px rgba(139, 92, 246, 0.05);
   }
 }
 
@@ -506,7 +539,7 @@ textarea,
 .sp-send-btn,
 .sp-btn-primary,
 .pk-publish-open {
-  background: linear-gradient(90deg, #00f2fe, #ff007f, #00f2fe) !important;
+  background: var(--ql-gradient-primary) !important;
   background-size: 200% auto !important;
   animation: ql-shimmer-sweep 4s linear infinite !important;
   font-family: var(--ql-font-family) !important;
@@ -520,17 +553,17 @@ textarea,
 .sp-send-btn:hover,
 .sp-btn-primary:hover,
 .pk-publish-open:hover {
-  box-shadow: 0 0 20px rgba(0, 242, 254, 0.45) !important;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.45) !important;
   transform: translateY(-1.5px) scale(1.02) !important;
 }
 
 /* Futuristic Neon Separator line at top header */
 .sp-header {
   position: relative;
-  background: rgba(9, 10, 20, 0.8) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 242, 254, 0.15) !important;
+  background: rgba(18, 19, 31, 0.95) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--ql-border) !important;
 }
 
 .sp-header::after {
@@ -540,46 +573,772 @@ textarea,
   left: 10%;
   right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--ql-accent), var(--ql-accent-hover), transparent);
-  box-shadow: 0 0 8px var(--ql-accent);
+  background: var(--ql-gradient-primary);
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
 }
 
 /* Enhanced input unified card borders */
 .sp-textarea {
-  border-color: rgba(0, 242, 254, 0.2) !important;
-  background: rgba(3, 3, 8, 0.6) !important;
+  border-color: var(--ql-border) !important;
+  background: rgba(26, 27, 46, 0.5) !important;
 }
 
 .sp-action-bar {
-  border-color: rgba(0, 242, 254, 0.2) !important;
-  background: rgba(3, 3, 8, 0.6) !important;
+  border-color: var(--ql-border) !important;
+  background: rgba(26, 27, 46, 0.5) !important;
 }
 
 .sp-textarea:focus {
-  border-color: var(--ql-accent-hover) !important;
-  box-shadow: 0 -4px 20px rgba(255, 0, 127, 0.15) !important;
+  border-color: var(--ql-border-glow) !important;
+  box-shadow: 0 -4px 20px rgba(139, 92, 246, 0.2) !important;
 }
 
 .sp-textarea:focus + #sp-attach-preview + .sp-action-bar,
 .sp-textarea:focus + .sp-action-bar {
-  border-color: var(--ql-accent-hover) !important;
-  box-shadow: 0 4px 20px rgba(255, 0, 127, 0.15) !important;
+  border-color: var(--ql-border-glow) !important;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2) !important;
 }
 
 /* Modern Glowing status badges */
 .sp-badge-pro {
-  background: rgba(0, 255, 135, 0.06) !important;
-  color: #00ff87 !important;
-  border: 1px solid rgba(0, 255, 135, 0.2) !important;
-  box-shadow: 0 0 10px rgba(0, 255, 135, 0.1);
-  text-shadow: 0 0 4px rgba(0, 255, 135, 0.2);
+  background: var(--ql-success-bg) !important;
+  color: var(--ql-success) !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15) !important;
+  text-shadow: none !important;
 }
 
 .sp-badge-test {
-  background: rgba(255, 183, 0, 0.06) !important;
-  color: #ffb700 !important;
-  border: 1px solid rgba(255, 183, 0, 0.2) !important;
-  box-shadow: 0 0 10px rgba(255, 183, 0, 0.1);
-  text-shadow: 0 0 4px rgba(255, 183, 0, 0.2);
+  background: var(--ql-warning-bg) !important;
+  color: var(--ql-warning) !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15) !important;
+  text-shadow: none !important;
 }
+
+
+
+/* ========================================
+   REVOLUTIONARY FUTURISTIC UI ENHANCEMENTS
+   ======================================== */
+
+/* Animated Background with Mesh Gradient */
+body:not(.sp-light) {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 70%),
+    linear-gradient(135deg, var(--ql-bg) 0%, #0f1020 100%);
+  background-size: 100% 100%;
+  animation: mesh-shift 20s ease-in-out infinite;
+}
+
+@keyframes mesh-shift {
+  0%, 100% { background-position: 0% 0%, 100% 100%, 50% 50%, 0% 0%; }
+  50% { background-position: 100% 100%, 0% 0%, 25% 75%, 0% 0%; }
+}
+
+/* Glassmorphic Cards with Glow */
+.sp-pkg-card,
+.ql-pkg-card,
+.sp-notif-panel,
+.pk-publish-modal,
+.sp-profile-card {
+  background: var(--ql-glass) !important;
+  border: 1px solid var(--ql-border) !important;
+  box-shadow: var(--ql-shadow) !important;
+  border-radius: var(--ql-radius) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  transition: all var(--ql-transition) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.sp-pkg-card::before,
+.ql-pkg-card::before,
+.sp-profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.sp-pkg-card:hover,
+.ql-pkg-card:hover,
+.sp-profile-card:hover {
+  border-color: var(--ql-border-hover) !important;
+  box-shadow: var(--ql-shadow-hover) !important;
+  transform: translateY(-2px) !important;
+}
+
+.sp-pkg-card:hover::before,
+.ql-pkg-card:hover::before,
+.sp-profile-card:hover::before {
+  left: 100%;
+}
+
+/* Modern Gradient Brand Text */
+.sp-brand-text {
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  letter-spacing: -0.02em !important;
+  background: var(--ql-gradient-primary) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  position: relative !important;
+}
+
+/* Premium Action Buttons with Shimmer */
+.sp-btn-feature,
+.sp-modal-btn,
+.ql-btn {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--ql-border) !important;
+  background: var(--ql-glass-light) !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all var(--ql-transition) !important;
+  font-weight: 600 !important;
+}
+
+.sp-btn-feature::before,
+.sp-modal-btn::before,
+.ql-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.4s;
+}
+
+.sp-btn-feature:hover,
+.sp-modal-btn:hover,
+.ql-btn:hover {
+  border-color: var(--ql-border-hover) !important;
+  background: var(--ql-bg-hover) !important;
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2) !important;
+}
+
+.sp-btn-feature:hover::before,
+.sp-modal-btn:hover::before,
+.ql-btn:hover::before {
+  left: 100%;
+}
+
+/* Primary Send Button with Animated Gradient */
+.sp-send-btn,
+.sp-btn-primary,
+.pk-publish-open {
+  background: var(--ql-gradient-primary) !important;
+  background-size: 200% auto !important;
+  animation: gradient-shift 3s ease-in-out infinite !important;
+  border: none !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.sp-send-btn::after,
+.sp-btn-primary::after,
+.pk-publish-open::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.sp-send-btn:hover::after,
+.sp-btn-primary:hover::after,
+.pk-publish-open:hover::after {
+  opacity: 1;
+  animation: shine 0.6s ease-out;
+}
+
+@keyframes shine {
+  0% { transform: translate(-50%, -50%) scale(0); }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+.sp-send-btn:hover,
+.sp-btn-primary:hover,
+.pk-publish-open:hover {
+  box-shadow: var(--ql-shadow-glow) !important;
+  transform: translateY(-2px) scale(1.03) !important;
+}
+
+/* Enhanced Header with Glow Line */
+.sp-header {
+  background: rgba(18, 19, 31, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid var(--ql-border) !important;
+  position: relative !important;
+}
+
+.sp-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--ql-gradient-primary);
+  opacity: 0.5;
+}
+
+/* Status Badges with Glow */
+.sp-badge,
+.sp-badge-pro {
+  background: var(--ql-success-bg) !important;
+  color: var(--ql-success) !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15) !important;
+  padding: 4px 10px !important;
+  border-radius: 20px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  animation: badge-pulse 2s ease-in-out infinite !important;
+}
+
+@keyframes badge-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.15); }
+  50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.3); }
+}
+
+.sp-badge-test {
+  background: var(--ql-warning-bg) !important;
+  color: var(--ql-warning) !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15) !important;
+}
+
+/* Input Fields Glassmorphic */
+.sp-textarea,
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  background: rgba(26, 27, 46, 0.5) !important;
+  border: 1px solid var(--ql-border) !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all var(--ql-transition) !important;
+  color: var(--ql-text-primary) !important;
+}
+
+.sp-textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+  border-color: var(--ql-border-glow) !important;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.2), 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
+  background: rgba(26, 27, 46, 0.7) !important;
+}
+
+/* Icon Buttons with Hover Effect */
+.sp-icon-btn,
+.ql-icon-btn {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 10px !important;
+  background: rgba(139, 92, 246, 0.05) !important;
+  border: 1px solid transparent !important;
+  transition: all var(--ql-transition) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.sp-icon-btn::before,
+.ql-icon-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(139, 92, 246, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+}
+
+.sp-icon-btn:hover,
+.ql-icon-btn:hover {
+  background: rgba(139, 92, 246, 0.15) !important;
+  border-color: var(--ql-border) !important;
+  transform: scale(1.1) !important;
+}
+
+.sp-icon-btn:hover::before,
+.ql-icon-btn:hover::before {
+  width: 100%;
+  height: 100%;
+}
+
+/* Discord CTA Button */
+.pk-discord-cta,
+.sp-support-link {
+  background: var(--ql-gradient-glass) !important;
+  border: 1px solid var(--ql-border) !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all var(--ql-transition) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.pk-discord-cta::before,
+.sp-support-link::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.3), transparent);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+  border-radius: 50%;
+}
+
+.pk-discord-cta:hover,
+.sp-support-link:hover {
+  border-color: var(--ql-border-hover) !important;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+.pk-discord-cta:hover::before,
+.sp-support-link:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b5cf6, #ec4899);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a78bfa, #f472b6);
+}
+
+/* Notification Badge Pulse */
+.sp-notif-badge {
+  background: var(--ql-danger) !important;
+  animation: notif-pulse 2s ease-in-out infinite !important;
+}
+
+@keyframes notif-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
+}
+
+/* Loading States */
+.sp-loading,
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(139, 92, 246, 0.05) 25%,
+    rgba(139, 92, 246, 0.15) 50%,
+    rgba(139, 92, 246, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Modal Overlays */
+.pk-publish-overlay {
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  animation: overlay-fade-in 0.3s ease-out !important;
+}
+
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
+}
+
+.pk-publish-modal {
+  animation: modal-slide-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@keyframes modal-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================
+   PREMIUM GLASSMORPHISM & NEURAL DASHBOARD REDESIGN (v7.0)
+   ========================================================== */
+
+/* 1. Global Page Aesthetics & Ambient Backdrops */
+body:not(.sp-light) {
+  background-color: #04060f !important;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.18) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.005) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.005) 1px, transparent 1px) !important;
+  background-size: 100% 100%, 100% 100%, 24px 24px, 24px 24px !important;
+  font-family: 'Hanken Grotesk', 'Inter', sans-serif !important;
+}
+
+/* Glassmorphism Header */
+.sp-header {
+  background: rgba(15, 22, 42, 0.65) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.sp-brand-text {
+  font-weight: 800 !important;
+  background: linear-gradient(135deg, #ffffff 30%, #a855f7 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* 2. Premium Content Wrappers */
+.sp-profile-card {
+  background: rgba(30, 41, 59, 0.25) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.sp-profile-card:hover {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  box-shadow: 0 12px 40px 0 rgba(139, 92, 246, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* 3. The Tech Prompt Console (Composer) */
+.sp-textarea {
+  border-radius: 16px 16px 0 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: none !important;
+  background: rgba(10, 15, 30, 0.7) !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all 0.3s ease !important;
+  font-size: 13.5px !important;
+}
+.sp-textarea:focus {
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  box-shadow: 0 -8px 24px rgba(139, 92, 246, 0.12) !important;
+  background: rgba(8, 12, 24, 0.8) !important;
+}
+
+.sp-action-bar {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top: none !important;
+  border-radius: 0 0 16px 16px !important;
+  background: rgba(10, 15, 30, 0.7) !important;
+  backdrop-filter: blur(10px) !important;
+  padding: 8px 16px 14px 16px !important;
+  transition: all 0.3s ease !important;
+}
+.sp-textarea:focus + #sp-attach-preview + .sp-action-bar,
+.sp-textarea:focus + .sp-action-bar {
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.12) !important;
+  background: rgba(8, 12, 24, 0.8) !important;
+}
+
+.sp-send-btn {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%) !important;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.3) !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  padding: 8px 20px !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.sp-send-btn:hover {
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5) !important;
+  transform: translateY(-1.5px) scale(1.02) !important;
+}
+
+/* 4. Interactive Suggestion Chips with Custom Themes */
+.sp-shortcuts-title {
+  font-weight: 800 !important;
+  font-size: 9.5px !important;
+  letter-spacing: 0.16em !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  margin-top: 10px !important;
+}
+
+.sp-shortcuts-grid {
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+.sp-chip {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 12px !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  padding: 10px 8px !important;
+  backdrop-filter: blur(4px) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+/* Dynamic Hover Color Schemes */
+.sp-chip:nth-child(1):hover {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  color: #fca5a5 !important;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.sp-chip:nth-child(2):hover {
+  background: rgba(168, 85, 247, 0.12) !important;
+  border-color: rgba(168, 85, 247, 0.5) !important;
+  color: #d8b4fe !important;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.sp-chip:nth-child(3):hover {
+  background: rgba(244, 63, 94, 0.12) !important;
+  border-color: rgba(244, 63, 94, 0.5) !important;
+  color: #fecdd3 !important;
+  box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.sp-chip:nth-child(4):hover {
+  background: rgba(234, 179, 8, 0.12) !important;
+  border-color: rgba(234, 179, 8, 0.5) !important;
+  color: #fef08a !important;
+  box-shadow: 0 4px 15px rgba(234, 179, 8, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.sp-chip:nth-child(5):hover {
+  background: rgba(59, 130, 246, 0.12) !important;
+  border-color: rgba(59, 130, 246, 0.5) !important;
+  color: #93c5fd !important;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.sp-chip:nth-child(6):hover {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  color: #6ee7b7 !important;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.sp-chip:nth-child(7):hover {
+  background: rgba(236, 72, 153, 0.12) !important;
+  border-color: rgba(236, 72, 153, 0.5) !important;
+  color: #fbcfe8 !important;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.sp-chip:nth-child(8):hover {
+  background: rgba(6, 182, 212, 0.12) !important;
+  border-color: rgba(6, 182, 212, 0.5) !important;
+  color: #a5f3fc !important;
+  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.sp-chip:nth-child(9):hover {
+  background: rgba(249, 115, 22, 0.12) !important;
+  border-color: rgba(249, 115, 22, 0.5) !important;
+  color: #ffedd5 !important;
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.2) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+
+/* 5. Collapsible Advanced Options Panel */
+.sp-advanced-toggle {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  font-weight: 800 !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.sp-advanced-toggle:hover {
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  color: #fff !important;
+}
+
+.sp-advanced-panel {
+  background: rgba(10, 15, 30, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  border-radius: 14px !important;
+  padding: 12px !important;
+  margin-top: 8px !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  animation: slide-fade-in 0.3s ease-out !important;
+}
+
+/* Sleek Action Buttons within Advanced Options */
+#sp-remove-watermark {
+  background: rgba(239, 68, 68, 0.04) !important;
+  border: 1px solid rgba(239, 68, 68, 0.15) !important;
+  color: #fca5a5 !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+}
+#sp-remove-watermark:hover {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15) !important;
+}
+
+#sp-shield-btn {
+  background: rgba(59, 130, 246, 0.04) !important;
+  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+  color: #93c5fd !important;
+  border-radius: 10px !important;
+}
+#sp-shield-btn:hover {
+  background: rgba(59, 130, 246, 0.12) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+#sp-shield-btn.sp-shield-active {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.45) !important;
+  color: #a7f3d0 !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.25) !important;
+}
+
+#sp-bypass-btn {
+  background: rgba(6, 182, 212, 0.04) !important;
+  border: 1px solid rgba(6, 182, 212, 0.15) !important;
+  color: #a5f3fc !important;
+  border-radius: 10px !important;
+}
+#sp-bypass-btn:hover {
+  background: rgba(6, 182, 212, 0.12) !important;
+  border-color: rgba(6, 182, 212, 0.4) !important;
+}
+#sp-bypass-btn:not(.sp-bypass-disabled-active) {
+  background: rgba(6, 182, 212, 0.12) !important;
+  border-color: rgba(6, 182, 212, 0.45) !important;
+  color: #a5f3fc !important;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.25) !important;
+}
+
+#sp-native-chat-btn {
+  background: rgba(139, 92, 246, 0.04) !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+  color: #c084fc !important;
+  border-radius: 10px !important;
+}
+#sp-native-chat-btn:hover {
+  background: rgba(139, 92, 246, 0.12) !important;
+  border-color: rgba(139, 92, 246, 0.4) !important;
+}
+
+#sp-download-project {
+  background: rgba(249, 115, 22, 0.04) !important;
+  border: 1px solid rgba(249, 115, 22, 0.15) !important;
+  color: #ffedd5 !important;
+  border-radius: 10px !important;
+}
+#sp-download-project:hover {
+  background: rgba(249, 115, 22, 0.12) !important;
+  border-color: rgba(249, 115, 22, 0.4) !important;
+}
+
+#sp-quick-init {
+  background: rgba(16, 185, 129, 0.04) !important;
+  border: 1px solid rgba(16, 185, 129, 0.15) !important;
+  color: #a7f3d0 !important;
+  border-radius: 10px !important;
+}
+#sp-quick-init:hover {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+#sp-publish-project, #sp-enable-cloud {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  border-radius: 10px !important;
+}
+#sp-publish-project:hover, #sp-enable-cloud:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+}
+
+/* 6. Tabs Redesign */
+.sp-tabs {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 12px !important;
+}
+.sp-tab.sp-tab-active {
+  background: rgba(139, 92, 246, 0.2) !important;
+  border: 1px solid rgba(139, 92, 246, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15) !important;
+}
+
+/* 7. Footer Stylings */
+.sp-footer {
+  background: rgba(10, 15, 30, 0.4) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
 

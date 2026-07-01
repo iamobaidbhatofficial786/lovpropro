@@ -2,11 +2,23 @@ import { NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '../../../../lib/supabase';
 import jwt from 'jsonwebtoken';
 
+class AuthError extends Error {
+  status = 401;
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthError';
+  }
+}
+
 function verifyAuth(request: Request) {
   const authHeader = request.headers.get('authorization') || '';
   const token = authHeader.replace(/^Bearer\s+/i, '');
   const adminSecret = process.env.ADMIN_SECRET || 'fallback_secret';
-  return jwt.verify(token, adminSecret);
+  try {
+    return jwt.verify(token, adminSecret);
+  } catch (err: any) {
+    throw new AuthError(err.message || 'Unauthorized');
+  }
 }
 
 export async function GET(request: Request) {
@@ -46,7 +58,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: true, devices: filtered });
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 401 });
+    const status = err instanceof AuthError ? 401 : 500;
+    return NextResponse.json({ success: false, error: err.message }, { status });
   }
 }
 
@@ -89,6 +102,7 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ success: true, message: 'Device removed. Extension will logout on next check.' });
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    const status = err instanceof AuthError ? 401 : 500;
+    return NextResponse.json({ success: false, error: err.message }, { status });
   }
 }
