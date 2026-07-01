@@ -69,3 +69,5 @@ public.pem
 
 # Documentation test files (can be removed if you want)
 DESIGN_VERIFICATION.html
+
+.vercel
